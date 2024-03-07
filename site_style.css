@@ -1,0 +1,14 @@
+
+body{
+    background-color: aqua;
+    text-align: center;
+}
+div {
+    border: 1px solid black;
+    margin: 25px 50px;
+    background-color: lightblue;
+}
+h1{
+    color: navy; 
+    margin-left: 0px;
+}
