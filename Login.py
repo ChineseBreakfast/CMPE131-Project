@@ -2,6 +2,10 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/help')
 def test():
-    return "<html> <body> <h1> you made it  </h1> </body> </html>"
+    return "render_template('test.html')"
+
+@app.route('/', methods=['get','post'])
+def test():
+    return "render_template('test.html')"
