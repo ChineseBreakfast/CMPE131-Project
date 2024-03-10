@@ -11,8 +11,8 @@ def home():
     return render_template('index.html')
 
 
-@app.route("/hello/<name>")
-def hello_there(name):
+@app.route("/hello/<name>/<password>", )
+def hello_there(name,password):
     now = datetime.now()
     formatted_now = now.strftime("%A, %d %B, %Y at %X")
 
@@ -25,5 +25,5 @@ def hello_there(name):
     else:
         clean_name = "Friend"
 
-    content = "Hello there, " + clean_name + "! It's " + formatted_now
+    content = "Hello there, " + clean_name + "! It's " + formatted_now + "your password is" + password
     return content
