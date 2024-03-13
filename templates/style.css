@@ -21,7 +21,7 @@ body{
 }
 
 h1{
-    font-family: "impact";
+    font-family: "OCR A Std, monospace";
 }
 
 p{
@@ -40,4 +40,60 @@ p{
     height: 300px;
     background-color: rgb(255, 255, 255,.3);
    
+}
+
+#button1{
+
+    margin-top: 4px;
+    border-radius: 8px;
+}
+
+#button2{
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+
+#button2:hover {
+    background-color: skyblue;
+    color: white;
+}
+
+input[type=submit]{
+    margin-top: 7px;
+    background-color: white;
+    padding: 4px 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+
+input[type=submit]:hover{
+    background-color: rgb(51, 240, 136);
+    color: white;
+}
+
+input[type=reset]{
+    margin-top: 15px;
+    background-color: white;
+    padding: 4px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+
+input[type=reset]:hover{
+    background-color: rgb(255, 53, 53);  
+    color: white;
 }
