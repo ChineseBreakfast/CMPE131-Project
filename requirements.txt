@@ -1,0 +1,10 @@
+#py -m pip install -r requirements.txt (do this to install all realavent python files)
+pandas
+polygon-api-client
+numpy
+sqlalchemy
+flask
+Flask-SQLAlchemy
+requests
+flask-marshmallow
+marshmallow-sqlalchemy
