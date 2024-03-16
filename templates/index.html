@@ -2,10 +2,8 @@
 <!--This is a comment-->
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" href="site_style.css">
         <title>Login</title>
-
-       
     </head>
     <body>
         <h1>This is a Login Page</h1>
@@ -16,12 +14,12 @@
             title = "goes to Google">
             Click this link
             </a>-->
-        <form action = "/hello/<name>/<password>" , method="post">
+        <form action = "/login" , method="POST">
             <!-- </form> Todo: Tony (Format this login page to look more modern)-->
             <label for="username">Username:</label><br>
-            <input type="text" id = "username" name = "username"><br>
+            <input type="text" id = "username" name = "username" placeholder = "username"> <br>
             <label for="Password">Password:</label><br>
-            <input type="text" id = "Password" name = "Password"><br>
+            <input type="text" id = "password" name = "password"  placeholder = "password"> <br>
 
             <input type="Reset"> <br>
             <input type="Submit">
