@@ -1,4 +1,5 @@
 import re
+import json
 from datetime import time
 from flask_sqlalchemy import SQLAlchemy 
 from flask import Flask, render_template, request, redirect, url_for
@@ -17,13 +18,6 @@ class employee(db.Model):
     end_work = db.Column(db.types.Time())
     Password = db.Column(db.String(100),nullable = True)
 
-class group():
-    group_name = ""
-    employees = []
-    def __init__ (self,group_name,employees):
-        self.group_name = group_name
-        self.employees = employees
-
 class meeting(db.Model):
     Meeting_id = db.Column(db.Integer, primary_key = True)
     Start = db.Column(db.types.Time(), nullable = False)
@@ -34,6 +28,17 @@ class meeting(db.Model):
 class room(db.Model):
     Room_number = db.Column(db.Integer, primary_key = True)
     meetings = db.Column(db.PickleType, nullable = True)
+
+class group():
+    group_name = ""
+    employees = []
+    def __init__ (self,group_name,employees):
+        self.group_name = group_name
+        self.employees = employees
+
+class groupdb(db.Model):
+    Group_ID = db.Column(db.Integer, primary_key = True)
+    People = db.Column(db.PickleType, nullable = False)
 
 @app.before_request
 def create_and_populate_db():
@@ -51,9 +56,32 @@ def create_and_populate_db():
 def home():
     return render_template('index.html')
 
+@app.route('/datainput', methods = ["GET","POST"])
+def data_submit():
+    if request.method == "POST":
+        names = request.form.getlist("select")
+    return render_template('index.html')
 
+@app.route('/datainput2', methods = ["GET","POST"])
+def data_submit2():
+     employee_names = []
+     name = request.form.get("name")
+     password = request.form.get("password")
+     age = request.form.get("age")
+     start_work = request.form.get("start_work")
+     start_work = start_work.split(':')
+     end_work = request.form.get("end_work")
+     end_work = end_work.split(':')
+     new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = time(int(start_work[0]),int(start_work[1]),0,0), end_work= time(int(end_work[0]),int(end_work[1]),0,0), Password = password)
+     db.session.add(new_employee)
+     for i in range(employee.query.count()):
+        info = employee.query.get(i+1)
+        employee_names.append(info.name)
+     return render_template('input.html', info=employee_names)
+         
 @app.route('/login', methods = ["GET","POST"])
 def hello_there():
+    employee_names = []
     if request.method == "POST":
         if (employee.query.count() == 0):
             employees = [                
@@ -78,7 +106,10 @@ def hello_there():
         for i in range(employee.query.count()):
             info = employee.query.get(i+1)
             if (info.name == username) and (info.Password == password):
-                return render_template('placeholder.html')
+                for i in range(employee.query.count()):
+                    info = employee.query.get(i+1)
+                    employee_names.append(info.name)
+                return render_template('input.html', info=employee_names)
 
     
 # todo; once the password is collected, we need to check 
