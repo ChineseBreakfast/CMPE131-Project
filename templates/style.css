@@ -1,0 +1,134 @@
+head{
+   
+
+}
+
+body{ 
+    background-image: url(https://wallpaper.dog/large/20395458.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+
+
+    /*background: linear-gradient(skyblue, rgb(132, 83, 155));
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin-top: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;*/
+}
+
+h1{
+    font-family: "OCR A Std, monospace";
+}
+
+p{
+    font-family: "consolas";
+    opacity: 1
+}
+
+#box{
+    margin-top: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    border: 5px solid;
+    border-style: outset;
+    width: 500px;
+    height: 300px;
+    background-color: rgb(255, 255, 255,.3);
+   
+}
+
+input[type=submit]{
+    margin-top: 7px;
+    background-color: white;
+    padding: 4px 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+
+input[type=submit]:hover{
+    background-color: rgb(51, 240, 136);
+    color: white;
+}
+
+input[type=reset]{
+    margin-top: 15px;
+    background-color: white;
+    padding: 4px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+
+input[type=reset]:hover{
+    background-color: rgb(255, 53, 53);  
+    color: white;
+}
+
+/*main page*/
+
+#mainbox{
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 5px solid;
+    border-style: outset;
+    width: 1600px;
+    height: 1000px;
+    background-color: rgb(255, 255, 255);
+
+}
+#div1 {
+    display: inline-block;
+    width:150px;
+}
+#div2 {
+    vertical-align:top;
+    display: inline-block;
+    width:150px;
+}
+#h2{
+   font-weight: 900;
+   font-family: "sans-serif";
+}
+#text{ 
+    font-family: "consolas";
+    margin-top: 400px;
+    margin-left: 50px;
+}
+
+button[type=submit]{
+    margin-top: 7px;
+    background-color: rgb(68, 158, 123);
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+button[type=submit]:hover{
+  
+    background-color: rgb(41, 85, 61);
+    color: white;
+}
+
+#selection{
+
+    padding: 7px, 7px
+
+
+}
+/* Name, Age, start time, end time */
