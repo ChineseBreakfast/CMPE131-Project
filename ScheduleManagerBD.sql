@@ -16,7 +16,8 @@ INSERT INTO `rooms` VALUES (100,30);
 
 CREATE TABLE `meetings` (
 `meeting_id` int(11) NOT NULL,
-`time_id` int(11) NOT NULL,
+`meeting_time_start` int(11) NOT NULL,
+`meeting_time_end` int(11) NOT NULL,
 `room_num` int(4) NOT NULL,
 `desc` varchar(100) NULL,
 PRIMARY KEY (`meeting_id`),
@@ -24,19 +25,7 @@ KEY `fk_room_num` (`room_num`),
 CONSTRAINT `fk_room_numx` FOREIGN KEY (`room_num`) REFERENCES `rooms` (`room_num`)
 ) ENGINE=InnoDB;
 
-INSERT INTO `meetings` VALUES (1,1,100, 'This is a test');
-
-CREATE TABLE `meeting_times` (
-`meeting_time_id` int(11) NOT NULL,
-`meeting_id` int(11) NOT NULL,
-`date_time_start` datetime NOT NULL,
-`date_time_end` datetime NOT NULL,
-PRIMARY KEY (`meeting_time_id`),
-KEY `fk_meeting_idx` (`meeting_id`),
-CONSTRAINT `fk_meeting_idx` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`meeting_id`)
-) ENGINE=InnoDB;
-
-INSERT INTO `meeting_times` VALUES (1,1,'2000-01-01 22:00:00', '2000-01-01 23:00:00');
+INSERT INTO `meetings` VALUES (1,'2000-01-01 22:00:00', '2000-01-01 23:00:00',100, 'This is a test');
 
 CREATE TABLE `people` (
 `people_id` int(11) NOT NULL,
