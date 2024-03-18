@@ -6,27 +6,31 @@
         <title>Login</title>
     </head>
     <body>
-        <h1>This is a Login Page</h1>
-            <!--Insert a Link [title = text in hover] [target = open up in new page]-->
-            <!--<a 
-            href = "http://www.google.com"
-            target = "_blank"
-            title = "goes to Google">
-            Click this link
-            </a>-->
-        <form action = "/login" , method="POST">
-            <!-- </form> Todo: Tony (Format this login page to look more modern)-->
-            <label for="username">Username:</label><br>
-            <input type="text" id = "username" name = "username" placeholder = "username"> <br>
-            <label for="Password">Password:</label><br>
-            <input type="text" id = "password" name = "password"  placeholder = "password"> <br>
-
-            <input type="Reset"> <br>
-            <input type="Submit">
-            <!-- Todo: John (send a signal to the backend, a function in the backend will check with
-            the current people and see if the username and password are correct, these will be the 
-            function arguments)-->
-        </form>    
+        <div id = "box">
+            <h1 >Login</h1>
+                <!--Insert a Link [title = text in hover] [target = open up in new page]-->
+                <!--<a 
+                href = "http://www.google.com"
+                target = "_blank"
+                title = "goes to Google">
+                Click this link
+                </a>-->
+            <form action = "app.py" , method="post">
+                <p>
+                    <!-- </form> Todo: Tony (Format this login page to look more modern)-->
+                    <label for="username">Username:</label><br>
+                    <input type="text" id = "username" name = "username"><br>
+                    <label for="Password">Password:</label><br>
+                    <input type="text" id = "Password" name = "Password"><br>
+                    <input type="Reset"> <br>
+                    <input type="Submit">
+                    
+                    <!-- Todo: John (send a signal to the backend, a function in the backend will check with
+                    the current people and see if the username and password are correct, these will be the 
+                    function arguments)-->
+                </p>
+            </form>   
+        </div>
 <!--To add pictures put it in root of "website"-->
 <!--/par keeps the formatt of a paragraph-->
     </body>

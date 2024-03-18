@@ -21,7 +21,7 @@ body{
 }
 
 h1{
-    font-family: "impact";
+    font-family: "OCR A Std, monospace";
 }
 
 p{
@@ -41,3 +41,53 @@ p{
     background-color: rgb(255, 255, 255,.3);
    
 }
+
+input[type=submit]{
+    margin-top: 7px;
+    background-color: white;
+    padding: 4px 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+
+input[type=submit]:hover{
+    background-color: rgb(51, 240, 136);
+    color: white;
+}
+
+input[type=reset]{
+    margin-top: 15px;
+    background-color: white;
+    padding: 4px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    border-radius: 8px;
+    transition-duration: 0.4s;
+}
+
+input[type=reset]:hover{
+    background-color: rgb(255, 53, 53);  
+    color: white;
+}
+
+/*main page*/
+
+#mainbox{
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 5px solid;
+    border-style: outset;
+    width: 1600px;
+    height: 1500px;
+    background-color: rgb(255, 255, 255);
+
+}
+
+/* Name, Age, start time, end time */
