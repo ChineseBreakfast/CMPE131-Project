@@ -3,7 +3,7 @@ style.setAttribute("id","multiselect_dropdown_styles");
 style.innerHTML = `
 .multiselect-dropdown{
   display: inline-block;
-  padding: 2px 5px 0px 5px;
+  padding: 2px 50px 0px 5px;
   border-radius: 4px;
   border: solid 1px #ced4da;
   background-color: white;
