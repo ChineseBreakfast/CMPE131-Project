@@ -22,7 +22,7 @@ class meeting(db.Model):
     Meeting_id = db.Column(db.Integer, primary_key = True)
     Start = db.Column(db.types.Time(), nullable = False)
     End = db.Column(db.types.Time(), nullable = False)
-    Room_number = db.Column(db.Integer, nullable = False)
+    Room_number = db.Column(db.String(10), nullable = False)
     People = db.Column(db.PickleType, nullable = False)
 
 class room(db.Model):
@@ -56,28 +56,38 @@ def create_and_populate_db():
 def home():
     return render_template('index.html')
 
-@app.route('/datainput', methods = ["GET","POST"])
+@app.route('/datainput1', methods = ["GET","POST"])
 def data_submit():
     if request.method == "POST":
         names = request.form.getlist("select")
+        start = request.form.get("Start")
+        start = start.split(':')
+        end = request.form.get("End")
+        end = end.split(':')
+        room_number = request.form.get("Room_number")
+        new_meeting = meeting(Meeting_id = meeting.query.count()+1, Start = time(int(start[0]),int(start[1]),0,0), End = time(int(end[0]),int(end[1]),0,0), Room_number= room_number, People = names)
+        db.session.add(new_meeting)
+        db.session.commit()
     return render_template('index.html')
 
 @app.route('/datainput2', methods = ["GET","POST"])
 def data_submit2():
-     employee_names = []
-     name = request.form.get("name")
-     password = request.form.get("password")
-     age = request.form.get("age")
-     start_work = request.form.get("start_work")
-     start_work = start_work.split(':')
-     end_work = request.form.get("end_work")
-     end_work = end_work.split(':')
-     new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = time(int(start_work[0]),int(start_work[1]),0,0), end_work= time(int(end_work[0]),int(end_work[1]),0,0), Password = password)
-     db.session.add(new_employee)
-     for i in range(employee.query.count()):
+    if request.method == "POST": 
+        employee_names = []
+        name = request.form.get("name")
+        password = request.form.get("password")
+        age = request.form.get("age")
+        start_work = request.form.get("start_work")
+        start_work = start_work.split(':')
+        end_work = request.form.get("end_work")
+        end_work = end_work.split(':')
+        new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = time(int(start_work[0]),int(start_work[1]),0,0), end_work= time(int(end_work[0]),int(end_work[1]),0,0), Password = password)
+        db.session.add(new_employee)
+        db.session.commit()
+    for i in range(employee.query.count()):
         info = employee.query.get(i+1)
         employee_names.append(info.name)
-     return render_template('input.html', info=employee_names)
+    return render_template('input.html', info=employee_names)
          
 @app.route('/login', methods = ["GET","POST"])
 def hello_there():
