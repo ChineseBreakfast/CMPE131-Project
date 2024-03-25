@@ -85,7 +85,7 @@ input[type=reset]:hover{
     border: 5px solid;
     border-style: outset;
     width: 1600px;
-    height: 1300px;
+    height: 1200px;
     background-color: rgb(255, 255, 255);
 
 }
@@ -105,6 +105,7 @@ input[type=reset]:hover{
 #menus{ 
     
     width: 400px;
+    padding-bottom: 20px;
     border: none;
     border-radius: 25px;
     background-color: rgba(190, 193, 204, 0.774);
@@ -138,6 +139,10 @@ button[type=submit]:hover{
     color: white;
 }
 
+.tab {
+    overflow: hidden;
+  }
+
 /* Style the buttons inside the tab */
 .tab button {
     margin-left: 20px;
@@ -155,5 +160,6 @@ button[type=submit]:hover{
     background-color: #adb2bd;
   }
   
+
 
 /* Name, Age, start time, end time */
