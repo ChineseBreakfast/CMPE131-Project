@@ -109,26 +109,21 @@ input[type=reset]:hover{
 }
 
 button[type=submit]{
-    margin-top: 7px;
+    margin-top: 10px;
+    padding: 10px;
     background-color: rgb(68, 158, 123);
     color: white;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-
-    border-radius: 8px;
+    border: none;
+    border-radius: 12px;
     transition-duration: 0.4s;
 }
 button[type=submit]:hover{
   
-    background-color: rgb(41, 85, 61);
+    background-color: rgb(71, 121, 93);
     color: white;
 }
 
-#selection{
-
-    padding: 50px, 20px
-
-
-}
 /* Name, Age, start time, end time */
