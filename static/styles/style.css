@@ -85,7 +85,7 @@ input[type=reset]:hover{
     border: 5px solid;
     border-style: outset;
     width: 1600px;
-    height: 1000px;
+    height: 1300px;
     background-color: rgb(255, 255, 255);
 
 }
@@ -102,10 +102,22 @@ input[type=reset]:hover{
    font-weight: 900;
    font-family: "sans-serif";
 }
-#text{ 
-    font-family: "consolas";
+#menus{ 
+    
+    width: 400px;
+    border: none;
+    border-radius: 25px;
+    background-color: rgba(190, 193, 204, 0.774);
     margin-top: 400px;
-    margin-left: 50px;
+    margin-left: 30px;
+    
+}
+
+
+
+#text{
+    margin-left: 10px;
+    font-family: "consolas";
 }
 
 button[type=submit]{
@@ -125,5 +137,23 @@ button[type=submit]:hover{
     background-color: rgb(71, 121, 93);
     color: white;
 }
+
+/* Style the buttons inside the tab */
+.tab button {
+    margin-left: 20px;
+    background-color: inherit;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+  }
+
+  /* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #adb2bd;
+  }
+  
 
 /* Name, Age, start time, end time */
