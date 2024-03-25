@@ -102,9 +102,10 @@ input[type=reset]:hover{
    font-weight: 900;
    font-family: "sans-serif";
 }
+/*menus*/
 #menus{ 
-    
     width: 400px;
+    height: 650px;
     padding-bottom: 20px;
     border: none;
     border-radius: 25px;
@@ -139,7 +140,26 @@ button[type=submit]:hover{
     color: white;
 }
 
+#remove{
+    margin-top: 10px;
+    padding: 10px;
+    background-color: rgb(231, 79, 79);
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border: none;
+    border-radius: 12px;
+    transition-duration: 0.4s; 
+}
+
+#remove:hover{
+    background-color: rgb(168, 70, 70);
+    color: white;
+}
+
 .tab {
+
     overflow: hidden;
   }
 
@@ -159,7 +179,12 @@ button[type=submit]:hover{
 .tab button:hover {
     background-color: #adb2bd;
   }
-  
+
+
+#editmenu{
+    display:none;
+    
+}
 
 
 /* Name, Age, start time, end time */
