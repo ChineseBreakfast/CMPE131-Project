@@ -44,19 +44,13 @@
                     }
                 </script>
                 <div id = "addmenu" class = "tabcontent">
+
+
+
                     <!--form for adding meeting info-->
                     <h2>Enter Meeting</h2>
                     <form action="/input_meeting" method="POST" class="mt-3">
-                        <!--
-                        <div class="form-group">
-                            <label for="Meeting_id">ID:</label>
-                            <input type="number" class="form-control" id="Meeting_id" name="Meeting_id" required>
-                        </div>
-                        -->
-                        <div class="form-group">
-                            <label for="Room_number">Room Number:</label>
-                            <input type="number" class="form-control" id="Room_number" name="Room_number" required> <br>
-                        </div>
+                        <!-- Participant selection  -->
                         <div class="form-group">
                             <div id = "selection">
                                 <select name="select" list="namesDataList" id="namesInput"  multiple multiselect-search = "true">
@@ -76,7 +70,6 @@
                                         select.appendChild(option);
                                     });
                                     }
-                            
                                     populateList(names);
                             
                                     </script>
@@ -84,20 +77,52 @@
                                     </script>
                             </div>
                         </div>
+                        <!-- Time selection  -->
                         <div>
                             <h3 class="mt-3">Meeting Time:</h3>
                             <div class="form-group">
                                 
                                     <label for="Meeting_Start_Time">Start:</label>
-                                    <input type="time" class="form-control" id="Start" name="Start" required>
-                            
+                                    <input type="datetime-local" class="form-control" id="Start" name="Start" required> <br>
+                                   
                                     <label for="Meeting_End_Time">End:</label>
-                                    <input type="time" class="form-control" id="End" name="End" required>
+                                    <input type="datetime-local" class="form-control" id="End" name="End" required>
                                 
                             </div>
+                            <label for="Meeting_description">Description:</label><br>
+                            <input type="text" class="form-control" id="Meeting_description" name="Meeting_description"><br> </input>
+
+                        <!-- Meeting Room selection  -->
+                        <div id = "selection"></div>
+                            <label for="Room_select">Meeting Room:</label>
+                            <select name="Room_select" list="Room_list" id="Room_select"> 
+                            <option value ="-1" >--Select a Meeting Room--</option>
+                            </select>
+                            <script>
+                                // import the names and convert it to an array using JSON
+                                var rooms = '{{ rooms | tojson}}'
+                                rooms = JSON.parse(rooms);
+                                
+                                const Room_select = document.getElementById('Room_select');
+                        
+                                // This is that input field
+                                function populateList(arr) {
+                                    arr.forEach(country => {
+                                    var option = document.createElement("option");
+                                    option.innerHTML = country;
+                                    Room_select.appendChild(option);
+                                });
+                                }
+                                populateList(rooms);
+                            </script>
                             <button type="submit" class="btn btn-success">Add Meeting</button>
                         </div>
                     </form>
+
+
+
+
+
                     <!--for for adding people-->
                     <h2>Add Person</h2>
                     <form action="/input_employee" method="post" class="mt-3">
@@ -124,33 +149,8 @@
                         <br>
                         <button type="submit" class="btn btn-success">Add Person</button>    
                     </form>
-                </div>
-                <!-- A button to open the popup form -->
+                                    <!-- A button to open the popup form -->
                 <button class="open-button" onclick="openForm()">Open Form</button>
-
-                <!-- The form -->
-                <div class="form-popup" id="myForm">
-                <form action="/input_Room" method = "POST" class="form-container">
-                    <h1>Add a Meeting Room</h1>
-
-                    <label for="Room Number"><b>Room Number</b></label>
-                    <input type="text" placeholder="Enter Room Number" name ="Room Number" required>
-
-                    <label for="Building Name"><b>Building</b></label>
-                    <input type="text" placeholder="Enter Building name" name = "Building">
-
-                    <button type="submit" class="btn">Add</button>
-                    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-                </form>
-                <script>
-                    function openForm() {
-                    document.getElementById("myForm").style.display = "block";
-                    }
-
-                    function closeForm() {
-                    document.getElementById("myForm").style.display = "none";
-                    }
-                </script>
                 </div>
                 <div id = "editmenu" class = "tabcontent">
                     <h2>Meeting:</h2>
@@ -184,4 +184,28 @@
             </div>
         </div>
     </div>
+    <!-- The form -->
+    <div class="form-popup" id="myForm">
+        <form action="/input_Room" method = "POST" class="form-container">
+            <h1>Add a Meeting Room</h1>
+
+            <label for="Room Number"><b>Room Number</b></label>
+            <input type="text" placeholder="Enter Room Number" name ="Room Number" required>
+
+            <label for="Building Name"><b>Building</b></label>
+            <input type="text" placeholder="Enter Building name" name = "Building">
+
+            <button type="submit" class="btn">Add</button>
+            <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+        </form>
+        <script>
+            function openForm() {
+            document.getElementById("myForm").style.display = "block";
+            }
+
+            function closeForm() {
+            document.getElementById("myForm").style.display = "none";
+            }
+        </script>
+        </div>
 </body>
