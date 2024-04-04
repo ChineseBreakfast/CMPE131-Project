@@ -4,6 +4,8 @@ from datetime import time, datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy 
 from flask import Flask, render_template, request, redirect, url_for
 
+debug = 1
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 
@@ -51,17 +53,38 @@ def home():
 @app.route('/input_meeting', methods = ["GET","POST"])
 def data_submit1():
     if request.method == "POST":
-        # we initialize all of the data we get from the request form subission
-        names = request.form.getlist("select")
+
+        # initialize the less complicated data
         start = request.form.get("Start")
         start = datetime.fromisoformat(start)
         end = datetime.fromisoformat(request.form.get("End"))
         room_number = request.form.get("Room_select")
         meeting_description = request.form.get("Meeting_description")
 
-        # Create a new object with the data from the form submission, then commit it to the database
-        new_meeting = meeting(Meeting_id = meeting.query.count()+1, Start = start, End = end, Room_number = room_number, People = names, Description = meeting_description)
+        # check for errors in time inputs 
+        if start > end:
+            print("Start time can not be after end time")
+        # todo add some kind of message to tell the user that the time is invalid 
+        # this should probably be done in javascript 
         
+        # we initialize the names from the form submission into employee objects that we can pass to the schedule checking function
+        names = request.form.getlist("select")
+        employee_names = employee.query
+        names_object = group("",[])
+        count = 0
+        for i in employee_names:
+            if (i.name == names[count]):
+                names_object.employees.append(employee_names[count])
+                count = count+1
+
+        # Create a new object with the data from the form submission, then commit it to the database
+        new_meeting = meeting(Meeting_id = meeting.query.count()+1, Start = start, End = end, Room_number = room_number, People = names_object, Description = meeting_description)
+
+        # Find conflicting employee times
+        employee_conflict_bool = 0
+        employee_conflict_list = find_meeting_conflicts(new_meeting)
+        # Todo create some way to inform the user of the employees who have time conflicts 
+
         # Finds room conflicting times and creates an array of rooms that will not have a time conflict 
         room_conflict_bool = 0 
         Room_conflict_list = list(find_room_conflict(new_meeting))
@@ -73,11 +96,13 @@ def data_submit1():
                     room_conflict_bool = 1
         if room_conflict_bool == 1 and room_number == "-1":
         # Will reload the page with only the rooms avaliable for that time, maybe there is a better way to do this without reloading the page
+        # But I haven't found out how to do it yet without a form resubmit 
             return render_template('input.html', rooms = new_room_list, info = return_employee_name_list())
         else:
-        
-            if room_number == "-1": # If the user left the field blank, then the program will assign them a Room from the valid room list
+        # If the user left the field blank, then the program will assign them a Room from the valid room list
+            if room_number == "-1": 
                 room_number = new_room_list[1]
+        # later if we give the employee object an assigned building we could assign them a room for the building they're in 
             db.session.add(new_meeting)
             db.session.commit()
     return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list())
@@ -139,6 +164,7 @@ def return_valid_rooms():
 # todo; once the password is collected, we need to check 
 # it against all of the other passwords in the database
     return render_template('index.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
 
@@ -168,6 +194,46 @@ def populate_database():
         db.session.bulk_save_objects(defaultrooms)
         db.session.commit()
 
+
+# return a list of employees objects who have time conflicts with the proposed meeting
+def find_meeting_conflicts(new_meeting):
+    employee_conflict_list = []
+
+    # check for conflicts with other meetings
+    for i in range(meeting.query.count()):
+        old_meeting = meeting.query.get(i+1)
+        # this if statement checks if two meetings overlap 
+        if  ((datetime.fromisoformat(str(new_meeting.End))   > datetime.fromisoformat(str(old_meeting.Start)) and 
+              datetime.fromisoformat(str(new_meeting.Start)) < datetime.fromisoformat(str(old_meeting.End)))  or 
+             (datetime.fromisoformat(str(new_meeting.End))   < datetime.fromisoformat(str(old_meeting.Start)) and 
+              datetime.fromisoformat(str(new_meeting.Start)) > datetime.fromisoformat(str(old_meeting.End)))):
+            # get an array of employees for each of the meetings we are compairing 
+            employee_list = old_meeting.People.employees
+            new_employee_list = new_meeting.People.employees
+            # Compare the employee lists and find any duplicate names and ID's
+            # If we find any duplicates we will add them ot the conflict list 
+            for j in employee_list:
+                for k in new_employee_list:
+                    exists = False
+                    if j.name == k.name and j.employee_id == k.employee_id:
+                        # check if item already exists in the array 
+                        for l in employee_conflict_list: 
+                            if l.name == k.name and l.employee_id == k.employee_id:
+                                exists = True
+                        if exists == False:
+                            employee_conflict_list.append(j)
+
+                        # debug printout 
+                        if (debug == 1):
+                            print("there is A time conflict with employee:" + j.name)
+                            print("The times:\n" + str(new_meeting.Start) +" to \n"+ str(new_meeting.End) + " conflicts with ")
+                            print(str(old_meeting.Start) +" to \n"+ str(old_meeting.End))
+    return employee_conflict_list # return the conflict list 
+    
+            
+
+    # check for conflicts with working time (i.e. if the employee does not work at those hours )
+
 # finds conflicts in room scheduling, returns an array of which meetings are conflicting 
 def find_room_conflict(new_meeting):
     Room_conflict_list = []
@@ -175,7 +241,7 @@ def find_room_conflict(new_meeting):
             old_meeting = meeting.query.get(i+1)
 #            if (new_meeting.Room_number == old_meeting.Room_number):
             if  ((datetime.fromisoformat(str(new_meeting.End))   > datetime.fromisoformat(str(old_meeting.Start)) and 
-                  datetime.fromisoformat(str(new_meeting.Start)) < datetime.fromisoformat(str(old_meeting.End))) or 
+                  datetime.fromisoformat(str(new_meeting.Start)) < datetime.fromisoformat(str(old_meeting.End)))  or 
                  (datetime.fromisoformat(str(new_meeting.End))   < datetime.fromisoformat(str(old_meeting.Start)) and 
                   datetime.fromisoformat(str(new_meeting.Start)) > datetime.fromisoformat(str(old_meeting.End)))):                                                                
                  Room_conflict_list.append(old_meeting.Room_number)
@@ -192,6 +258,7 @@ def return_room_name_list():
         rooms.append(tempitem)
     return rooms
 
+# returns a list of all of the employees 
 def return_employee_name_list():
     employee_names = []
     for i in range(employee.query.count()):
