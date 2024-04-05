@@ -68,7 +68,7 @@ def data_submit():
         new_meeting = meeting(Meeting_id = meeting.query.count()+1, Start = time(int(start[0]),int(start[1]),0,0), End = time(int(end[0]),int(end[1]),0,0), Room_number= room_number, People = names)
         db.session.add(new_meeting)
         db.session.commit()
-    return render_template('index.html')
+    return render_template('input.html')
 
 @app.route('/datainput2', methods = ["GET","POST"])
 def data_submit2():
