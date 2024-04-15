@@ -63,7 +63,8 @@ def data_submit1():
 
         # check for errors in time inputs 
         if start > end:
-            print("Start time can not be after end time")
+            error_message = "Start time can not be after end time"
+            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), error_message = error_message)
         # todo add some kind of message to tell the user that the time is invalid 
         # this should probably be done in javascript 
         
@@ -73,7 +74,7 @@ def data_submit1():
         names_object = group("",[])
         count = 0
         for i in employee_names:
-            if (i.name == names[count]):
+            if ((count < len(names)) and (i.name == names[count])):
                 names_object.employees.append(employee_names[count])
                 count = count+1
 
@@ -148,6 +149,7 @@ def data_submit3():
 def hello_there():
     populate_database()
     if request.method == "POST":
+        return_meeting_times(datetime.now(), datetime.now()+timedelta(days= 1, hours = 2))
         username = request.form.get("username")
         password = request.form.get("password")
         employee_num = employee.query.count()
@@ -280,3 +282,32 @@ def return_all_meeting_objects():
     for i in meeting.query:
         return_meetings.append(i)
     return return_meetings
+
+# output is an array of meeting times, the input is 2 dates 
+# on error returns -1 
+# returns in the format starttime||endtime||roomnumber||description||# of employees attending||[List of employees]
+def return_meeting_times(start_date,end_date):
+    return_meeting_objects = []
+    #check if the inputs are valid datetime objects 
+    if((type(start_date) is datetime) and (type(end_date) is datetime)): 
+        if (start_date > end_date):
+            print("Invalid date range")
+            return -1
+        else:
+            # itterate through all meetings
+            for i in meeting.query:
+                 # check if that meeting fits within the 2 dates provided 
+                if ((i.Start > start_date) and (i.End < end_date)):
+                    tempstring = str(i.Start) +"||"+ str(i.End)+"||"+i.Room_number+"||"+i.Description+"||"+str(len(i.People.employees))+"||"
+                    # itterate through all employees registered for that meeting 
+                    for j in i.People.employees: 
+                        tempstring = tempstring + j.name +","
+                    return_meeting_objects.append(tempstring)
+            return return_meeting_objects
+    else:
+        print("invalid date time")
+        return -1
+
+
+  
+

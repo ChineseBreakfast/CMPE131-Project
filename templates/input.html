@@ -50,6 +50,20 @@
                     <!--form for adding meeting info-->
                     <h2>Enter Meeting</h2>
                     <form action="/input_meeting" method="POST" class="mt-3">
+                        <div class="popup" onsubmit="myFunction()">
+                            <span class="popuptext" id="myPopup"></span>
+                          </div>
+                          <script>
+                            // When the user clicks on <div>, open the popup
+                            function myFunction() {
+                            var names = '{{ info | tojson}}';
+                              names = JSON.parse(names);
+                              var popup = document.getElementById("myPopup");
+                              
+                              popup.classList.
+                            }
+
+                            </script>
                         <!-- Participant selection  -->
                         <div class="form-group">
                             <div id = "selection">
@@ -118,7 +132,14 @@
                             <button type="submit" class="btn btn-success">Add Meeting</button>
                         </div>
                     </form>
-
+                    <script>
+                        function myFunction() {
+                          const inpObj = document.getElementById("id1");
+                          if (!inpObj.checkValidity()) {
+                            document.getElementById("demo").innerHTML = inpObj.validationMessage;
+                          }
+                        }
+                    </script>
 
 
 
