@@ -13,7 +13,7 @@ def test_return_meeting_participants():
             for i in test_meeting.People.employees:
                 names_list.append(i.name)
             assert return_meeting_participants(test_meeting) == names_list
-            
+
 def test_return_employee_name_list():
     employee_names = []
     with app.app_context():
@@ -21,9 +21,9 @@ def test_return_employee_name_list():
             info = employee.query.get(i+1)
             employee_names.append(info.name)
         assert return_employee_name_list() == employee_names
-
+        
+# create an array of 10 meetings to test 
 with app.app_context():
-
     for meeting_number in range(0,10):
         # create an array of random employees to be added to each test meeting 
         employee_list = []
@@ -48,6 +48,6 @@ with app.app_context():
             People = test_group,
             Description = "Test_meeting: " + str(meeting.query.count()+1)))
 
-# create an array of 10 meetings to test 
+
 
 

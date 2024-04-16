@@ -1,7 +1,8 @@
 import re
 import json
 import pickle
-from datetime import time, datetime, timedelta
+import random
+from datetime import time, datetime, timedelta, date
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
@@ -173,6 +174,31 @@ def return_valid_rooms():
 if __name__ == '__main__':
     app.run(debug=True)
 
+def generate_random_meetings(number):
+    random_meetings = []
+    for meeting_number in range(0,number):
+        # create an array of random employees to be added to each test meeting 
+        employee_list = []
+        for person in employee.query:
+            if random.random() > 0.5:
+                employee_list.append(person)
+        test_group = group("testgroup",employee_list)       
+
+        # create a random start time within the week, and the duration of the meeting 
+        start_time_days = random.randrange(1,7,1)
+        start_time_hours =  random.randrange(9,17,1)
+        meeting_time = random.randrange(0,240,5)
+        start_date = datetime(year = datetime.now().year, month=datetime.now().month,  day = datetime.now().day)
+        end_date = datetime(year = datetime.now().year,month=datetime.now().month, day = datetime.now().day)
+        start_date = start_date + timedelta(days = start_time_days,  hours = start_time_hours)
+        end_date = end_date + timedelta(days = start_time_days,  hours = start_time_hours, minutes = meeting_time)
+        
+        # get a random room from the rooms avaliable
+        test_room = room.query.get(random.randrange(1,room.query.count(),1))
+        test_room = str(test_room.Room_number) +" "+ str(test_room.Building)
+        random_meetings.append(meeting(Meeting_id = meeting_number, Start = start_date, End = end_date, Room_number = test_room, People = test_group, Description = "Test_meeting: " + str(meeting_number)))
+    return random_meetings
+        
 def populate_database():
     db.create_all()
     if  employee.query.count() == 0:
@@ -190,12 +216,6 @@ def populate_database():
         db.session.bulk_save_objects(employees)
         db.session.commit()
     group1 = group("group1", [employee.query.get(1),employee.query.get(2),employee.query.get(3)])    
-    if (meeting.query.count() == 0):
-        meetings = [
-        meeting(Meeting_id = 1,Start = datetime.now()+ timedelta(hours = 2)          , End = datetime.now() + timedelta(hours = 5)           , Room_number = "324 Clark building"      , People = group1, Description = "Meeting 1"),
-        meeting(Meeting_id = 2,Start = datetime.now()+ timedelta(days =2, hours = 4) , End = datetime.now() + timedelta(days = 2, hours = 7) , Room_number = "110 Engineering building", People = group1, Description = "Meeting 2") ]
-        db.session.bulk_save_objects(meetings)
-        db.session.commit()
     if room.query.count() == 0:
         defaultrooms = [
         room(Room_ID = 1,  Room_number = 324, Building = "Clark building"),
@@ -209,6 +229,10 @@ def populate_database():
         room(Room_ID = 9,  Room_number = 821, Building = "Brown Residence"),
         room(Room_ID = 10, Room_number = 318, Building = "Robinson Hall") ]
         db.session.bulk_save_objects(defaultrooms)
+        db.session.commit()
+    if (meeting.query.count() == 0):
+        meetings = generate_random_meetings(5)
+        db.session.bulk_save_objects(meetings)
         db.session.commit()
 
 # return a list of employees objects who have time conflicts with the proposed meeting
