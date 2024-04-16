@@ -1,16 +1,18 @@
 import re
 import json
+import pickle
 from datetime import time, datetime, timedelta
-from flask_sqlalchemy import SQLAlchemy 
-from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
 debug = 1
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+
 
 class employee(db.Model):
     name = db.Column(db.String(100), nullable = False)
@@ -47,6 +49,7 @@ class groupdb(db.Model):
 
 @app.route("/")    
 def home():
+    populate_database()
     return render_template('index.html')
 
 # route for meeting form submit
@@ -147,7 +150,6 @@ def data_submit3():
 
 @app.route('/login', methods = ["GET","POST"])
 def hello_there():
-    populate_database()
     if request.method == "POST":
         return_meeting_times(datetime.now(), datetime.now()+timedelta(days= 1, hours = 2))
         username = request.form.get("username")
@@ -171,15 +173,20 @@ def return_valid_rooms():
 if __name__ == '__main__':
     app.run(debug=True)
 
-
 def populate_database():
     db.create_all()
-    
     if  employee.query.count() == 0:
         employees = [                
-        employee(name='Jim',  employee_id = '1', age=26, start_work = time(7,30,0,0), end_work= time(18,30,0,0), Password = 123),
-        employee(name='Jane', employee_id = '2', age=53, start_work = time(7,30,0,0),end_work= time(18,30,0,0), Password = 456),
-        employee(name='John', employee_id = '3', age=34, start_work = time(8,0,0,0), end_work= time(18,30,0,0),Password = 789) ]
+        employee(name='Jim',     employee_id = '1',  age=26, start_work = time(7,30,0,0), end_work= time(18,30,0,0), Password = 123),
+        employee(name='Jane',    employee_id = '2',  age=53, start_work = time(7,30,0,0), end_work= time(18,30,0,0), Password = 456),
+        employee(name='John',    employee_id = '3',  age=34, start_work = time(8,0,0,0),  end_work= time(18,30,0,0), Password = 789),
+        employee(name='Emily',   employee_id = '4',  age=32, start_work = time(8,15,0,0), end_work= time(17,45,0,0), Password = 246),
+        employee(name='David',   employee_id = '5',  age=45, start_work = time(8,30,0,0), end_work= time(18,0,0,0),  Password = 135),
+        employee(name='Sarah',   employee_id = '6',  age=29, start_work = time(9,0,0,0),  end_work= time(17,30,0,0), Password = 579),
+        employee(name='Michael', employee_id = '7',  age=38, start_work = time(7,45,0,0), end_work= time(17,15,0,0), Password = 802),
+        employee(name='Laura',   employee_id = '8',  age=50, start_work = time(8,0,0,0),  end_work= time(18,30,0,0), Password = 951),
+        employee(name='Chris',   employee_id = '9',  age=31, start_work = time(7,30,0,0), end_work= time(16,45,0,0), Password = 357),
+        employee(name='Michelle',employee_id = '10', age=47, start_work = time(9,15,0,0), end_work= time(18,15,0,0), Password = 624) ]
         db.session.bulk_save_objects(employees)
         db.session.commit()
     group1 = group("group1", [employee.query.get(1),employee.query.get(2),employee.query.get(3)])    
@@ -191,17 +198,22 @@ def populate_database():
         db.session.commit()
     if room.query.count() == 0:
         defaultrooms = [
-        room(Room_ID = 1, Room_number = 324, Building = "Clark building"),
-        room(Room_ID = 2, Room_number = 110, Building = "Engineering building"),
-        room(Room_ID = 3, Room_number = 532, Building = "Parker building")]
+        room(Room_ID = 1,  Room_number = 324, Building = "Clark building"),
+        room(Room_ID = 2,  Room_number = 110, Building = "Engineering building"),
+        room(Room_ID = 3,  Room_number = 532, Building = "Parker building"),
+        room(Room_ID = 4,  Room_number = 201, Building = "Smith Hall"),
+        room(Room_ID = 5,  Room_number = 415, Building = "Johnson Center"),
+        room(Room_ID = 6,  Room_number = 102, Building = "Wilson Library"),
+        room(Room_ID = 7,  Room_number = 711, Building = "Taylor Hall"),
+        room(Room_ID = 8,  Room_number = 604, Building = "Anderson Complex"),
+        room(Room_ID = 9,  Room_number = 821, Building = "Brown Residence"),
+        room(Room_ID = 10, Room_number = 318, Building = "Robinson Hall") ]
         db.session.bulk_save_objects(defaultrooms)
         db.session.commit()
-
 
 # return a list of employees objects who have time conflicts with the proposed meeting
 def find_meeting_conflicts(new_meeting):
     employee_conflict_list = []
-
     # check for conflicts with other meetings
     for i in range(meeting.query.count()):
         old_meeting = meeting.query.get(i+1)
@@ -307,7 +319,3 @@ def return_meeting_times(start_date,end_date):
     else:
         print("invalid date time")
         return -1
-
-
-  
-
