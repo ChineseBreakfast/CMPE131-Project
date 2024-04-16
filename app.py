@@ -94,7 +94,7 @@ def data_submit1():
                 if(i == j):
                     new_room_list.remove(j)
                     room_conflict_bool = 1
-        if room_conflict_bool == 1 and room_number == "-1":
+        if room_conflict_bool == 1 or room_number == "-1":
         # Will reload the page with only the rooms avaliable for that time, maybe there is a better way to do this without reloading the page
         # But I haven't found out how to do it yet without a form resubmit 
             return render_template('input.html', rooms = new_room_list, info = return_employee_name_list())
