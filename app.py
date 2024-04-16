@@ -105,6 +105,7 @@ def data_submit1():
         # later if we give the employee object an assigned building we could assign them a room for the building they're in 
             db.session.add(new_meeting)
             db.session.commit()
+            
     return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list())
 
 # route from employee form submit
@@ -265,3 +266,17 @@ def return_employee_name_list():
         info = employee.query.get(i+1)
         employee_names.append(info.name)
     return employee_names
+
+# return a list of employee names given a meeting object
+def return_meeting_participants(meeting):
+    employee_names = []
+    for i in meeting.People.employees:
+        employee_names.append(i.name)
+    return employee_names
+
+# return a list of all of the meetings
+def return_all_meeting_objects():
+    return_meetings = []
+    for i in meeting.query:
+        return_meetings.append(i)
+    return return_meetings
