@@ -93,13 +93,14 @@ def data_submit1():
 
         # Finds room conflicting times and creates an array of rooms that will not have a time conflict 
         room_conflict_bool = 0 
-        Room_conflict_list = list(find_room_conflict(new_meeting))
+        Room_conflict_list = find_room_conflict(new_meeting)
         new_room_list = return_room_name_list()
-        for i in Room_conflict_list:
-            for j in new_room_list:
-                if(i == j):
-                    new_room_list.remove(j)
-                    room_conflict_bool = 1
+        if Room_conflict_list != -1:
+            for i in Room_conflict_list:
+                for j in new_room_list:
+                    if(i == j):
+                        new_room_list.remove(j)
+                        room_conflict_bool = 1
         if room_conflict_bool == 1 and room_number == "-1":
         # Will reload the page with only the rooms avaliable for that time, maybe there is a better way to do this without reloading the page
         # But I haven't found out how to do it yet without a form resubmit 
@@ -107,7 +108,7 @@ def data_submit1():
         else:
         # If the user left the field blank, then the program will assign them a Room from the valid room list
             if room_number == "-1": 
-                room_number = new_room_list[1]
+                new_meeting.Room_number = new_room_list[1]
         # later if we give the employee object an assigned building we could assign them a room for the building they're in 
             db.session.add(new_meeting)
             db.session.commit()
@@ -240,8 +241,7 @@ def populate_database():
 def find_meeting_conflicts(new_meeting):
     employee_conflict_list = []
     # check for conflicts with other meetings
-    for i in range(meeting.query.count()):
-        old_meeting = meeting.query.get(i+1)
+    for old_meeting in meeting.query:
         # this if statement checks if two meetings overlap 
         if  ((datetime.fromisoformat(str(new_meeting.End))   > datetime.fromisoformat(str(old_meeting.Start)) and 
               datetime.fromisoformat(str(new_meeting.Start)) < datetime.fromisoformat(str(old_meeting.End)))  or 
@@ -287,7 +287,8 @@ def find_room_conflict(new_meeting):
     if len(Room_conflict_list) == 0:
         return -1
     else:
-        return Room_conflict_list
+        Room_conflict_list = set(Room_conflict_list)
+        return list(Room_conflict_list)
     
         
 
