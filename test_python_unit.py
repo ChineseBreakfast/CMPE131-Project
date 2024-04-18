@@ -73,7 +73,7 @@ with app.app_context():
     @pytest.mark.parametrize('test_number',[0,1,2,3])
     def test_room_conflicts_conflict(test_number):
         with app.app_context():
-            test_meeting = meeting.query.get(0)
+            test_meeting = meeting.query.get(1)
             new_meeting = copy.deepcopy(test_meeting)
             if test_number == 0:
                 new_meeting.Start =  new_meeting.Start - timedelta(minutes = 5)
@@ -87,7 +87,7 @@ with app.app_context():
             elif test_number == 3:
                 new_meeting.Start += timedelta(minutes = 5)
                 new_meeting.End   += timedelta(minutes = 5)
-            assert find_room_conflict(new_meeting)[0]== new_meeting.Room_number
+            assert find_room_conflict(new_meeting)[0] == new_meeting.Room_number
 
     @pytest.mark.parametrize('input',[0,'b',"garbage_string",[(1),(3),(6),(10)]])
     def test_room_conflicts_garbage(input):
@@ -95,9 +95,9 @@ with app.app_context():
             assert find_room_conflict(input) == -1
 
     @pytest.mark.parametrize('test_number',[0,1])
-    def test_romm_conflicts_no_conflict(test_number):
+    def test_room_conflicts_no_conflict(test_number):
         with app.app_context():
-            test_meeting = meeting.query.get(0)
+            test_meeting = meeting.query.get(1)
             new_meeting = copy.deepcopy(test_meeting)
             if test_number == 0:
                 new_meeting.Start -= timedelta(minutes = 10)
@@ -221,3 +221,78 @@ with app.app_context():
     def test_find_universal_conflict(input,expected):
         with app.app_context():
             assert find_universal_time_conflict(input) == expected
+
+    @pytest.mark.parametrize("input,expected", [
+                
+                # test 1 no conflicts 
+                (meeting( Meeting_id = meeting.query.count()+1,
+                Start = datetime(2024, 4, 21, 12, 0, 0, 0),
+                End = datetime(2024, 4, 21, 13, 0, 0, 0),
+                Room_number = str(room.query.get(2).Room_number) + " " + room.query.get(2).Building,
+                People = group("testgroup",[employee.query.get(4),employee.query.get(5),employee.query.get(6)]),
+                Description = "Test_meeting: " + str(meeting.query.count()+1)),0),
+
+                # test 2 no employee time conflict, no room conflict, employee conflict
+                (meeting( Meeting_id = meeting.query.count()+1,
+                Start = datetime(2024, 4, 20, 12, 0, 0, 0),
+                End = datetime(2024, 4, 20, 13, 0, 0, 0),
+                Room_number = str(room.query.get(2).Room_number) + " " + room.query.get(2).Building,
+                People = group("testgroup",[employee.query.get(1),employee.query.get(2),employee.query.get(3)]),
+                Description = "Test_meeting: " + str(meeting.query.count()+1)),2),
+
+                # test 3 no employee time conflict, room conflict, no employee conflict
+                (meeting( Meeting_id = meeting.query.count()+1,
+                Start = datetime(2024, 4, 20, 12, 0, 0, 0),
+                End = datetime(2024, 4, 20, 13, 0, 0, 0),
+                Room_number = str(room.query.get(1).Room_number) + " " + room.query.get(1).Building,
+                People = group("testgroup",[employee.query.get(4),employee.query.get(5),employee.query.get(6)]),
+                Description = "Test_meeting: " + str(meeting.query.count()+1)),1),
+                
+                # test 4 no employee time conflict, room conflict, employee conflict
+                (meeting( Meeting_id = meeting.query.count()+1,
+                Start = datetime(2024, 4, 20, 12, 0, 0, 0),
+                End = datetime(2024, 4, 20, 13, 0, 0, 0),
+                Room_number = str(room.query.get(1).Room_number) + " " + room.query.get(1).Building,
+                People = group("testgroup",[employee.query.get(1),employee.query.get(2),employee.query.get(3)]),
+                Description = "Test_meeting: " + str(meeting.query.count()+1)),1),
+
+                 # test 5 employee time conflict, no room conflict, no employee conflict
+                (meeting( Meeting_id = meeting.query.count()+1,
+                Start = datetime(2024, 4, 20, 6, 0, 0, 0),
+                End = datetime(2024, 4, 20, 8, 0, 0, 0),
+                Room_number = str(room.query.get(2).Room_number) + " " + room.query.get(2).Building,
+                People = group("testgroup",[employee.query.get(1),employee.query.get(2),employee.query.get(3)]),
+                Description = "Test_meeting: " + str(meeting.query.count()+1)),3),
+
+                # test 6 no employee time conflict, no room conflict, employee conflict
+                (meeting( Meeting_id = meeting.query.count()+1,
+                Start = datetime(2024, 4, 20, 6, 0, 0, 0),
+                End = datetime(2024, 4, 20, 13, 0, 0, 0),
+                Room_number = str(room.query.get(2).Room_number) + " " + room.query.get(2).Building,
+                People = group("testgroup",[employee.query.get(1),employee.query.get(2),employee.query.get(3)]),
+                Description = "Test_meeting: " + str(meeting.query.count()+1)),2),
+
+                # test 7  employee time conflict, room conflict, no employee conflict
+                (meeting( Meeting_id = meeting.query.count()+1,
+                Start = datetime(2024, 4, 20, 6, 0, 0, 0),
+                End = datetime(2024, 4, 20, 13, 0, 0, 0),
+                Room_number = str(room.query.get(1).Room_number) + " " + room.query.get(1).Building,
+                People = group("testgroup",[employee.query.get(4),employee.query.get(5),employee.query.get(6)]),
+                Description = "Test_meeting: " + str(meeting.query.count()+1)),1),
+
+                # test 8  employee time conflict, room conflict, employee conflict
+                (meeting( Meeting_id = meeting.query.count()+1,
+                Start = datetime(2024, 4, 20, 6, 0, 0, 0),
+                End = datetime(2024, 4, 20, 13, 0, 0, 0),
+                Room_number = str(room.query.get(1).Room_number) + " " + room.query.get(1).Building,
+                People = group("testgroup",[employee.query.get(1),employee.query.get(2),employee.query.get(3)]),
+                Description = "Test_meeting: " + str(meeting.query.count()+1)),1),
+                ])
+    def test_recommend_new_meeting_times(input,expected):
+        with app.app_context():
+           # print(reccomend_new_meeting_times(input))
+            catchloop = [0,0,0]
+            print_meeting_data(input)
+            print("____________________________\n")
+            print_meeting_data(reccomend_new_meeting_times(input,catchloop))
+            assert find_universal_time_conflict(reccomend_new_meeting_times(input,catchloop)) == 0

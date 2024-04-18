@@ -7,7 +7,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
 debug = 1
-NUMBER_OF_MEETINGS = 1
+NUMBER_OF_MEETINGS = 10
+
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -52,6 +54,8 @@ class groupdb(db.Model):
 @app.route("/")    
 def home():
     populate_database()
+    if debug:
+            print_all_meetings()
     return render_template('index.html')
 
 # route for meeting form submit
@@ -189,7 +193,7 @@ def generate_random_meetings(number):
         # create a random start time within the week, and the duration of the meeting 
         start_time_days = random.randrange(1,7,1)
         start_time_hours =  random.randrange(9,17,1)
-        meeting_time = random.randrange(0,240,5)
+        meeting_time = random.randrange(30,240,5)
         start_date = datetime(year = datetime.now().year, month=datetime.now().month,  day = datetime.now().day)
         end_date = datetime(year = datetime.now().year,month=datetime.now().month, day = datetime.now().day)
         start_date = start_date + timedelta(days = start_time_days,  hours = start_time_hours)
@@ -198,7 +202,9 @@ def generate_random_meetings(number):
         # get a random room from the rooms avaliable
         test_room = room.query.get(random.randrange(1,room.query.count(),1))
         test_room = str(test_room.Room_number) +" "+ str(test_room.Building)
-        random_meetings.append(meeting(Meeting_id = meeting_number, Start = start_date, End = end_date, Room_number = test_room, People = test_group, Description = "Test_meeting: " + str(meeting_number)))
+        new_meeting = meeting(Meeting_id = meeting_number, Start = start_date, End = end_date, Room_number = test_room, People = test_group, Description = "Test_meeting: " + str(meeting_number))
+        db.session.add(reccomend_new_meeting_times(new_meeting,[0,0,0]))
+        db.session.commit()
     return random_meetings
         
 def populate_database():
@@ -233,17 +239,17 @@ def populate_database():
         db.session.bulk_save_objects(defaultrooms)
         db.session.commit()
     if (meeting.query.count() == 0):
-        db.session.add(meeting(
-            Meeting_id = meeting.query.count()+1,
-            Start = datetime(2024, 4, 20, 12, 30, 0, 0),
-            End = datetime(2024, 4, 20, 14, 0, 0, 0),
-            Room_number = "324 Clark building",
-            People = group("testgroup",[employee.query.get(1),employee.query.get(2),employee.query.get(3)]),
-            Description = "Test_meeting: " + str(meeting.query.count()+1)),2)
-        db.session.commit()
-        #meetings = generate_random_meetings(NUMBER_OF_MEETINGS)
-        #db.session.bulk_save_objects(meetings)
+        meetings = generate_random_meetings(NUMBER_OF_MEETINGS)
+
+        # db.session.add(meeting(
+        #     Meeting_id = meeting.query.count()+1,
+        #     Start = datetime(2024, 4, 20, 12, 30, 0, 0),
+        #     End = datetime(2024, 4, 20, 14, 0, 0, 0),
+        #     Room_number = "324 Clark building",
+        #     People = group("testgroup",[employee.query.get(1),employee.query.get(2),employee.query.get(3)]),
+        #     Description = "Test_meeting: " + str(meeting.query.count()+1)),2)
         # db.session.commit()
+            
 
 # return a list of employees objects who have time conflicts with the proposed meeting
 def find_meeting_conflicts(new_meeting):
@@ -278,10 +284,53 @@ def find_meeting_conflicts(new_meeting):
                             print(str(old_meeting.Start) +" to \n"+ str(old_meeting.End))
     return employee_conflict_list # return the conflict list 
 
+def reccomend_new_meeting_times(new_meeting,catchloop):
+    # catchloop detects if the program cannot find a suitable meeting on the same day, so picks the next day to have the meeting 
+    for i in catchloop:
+        if i > 10:
+            catchloop = [0,0,0]
+            new_meeting.Start = new_meeting.Start + timedelta(days=1)
+            new_meeting.End = new_meeting.End + timedelta(days=1)
+    delta =  new_meeting.End - new_meeting.Start 
+    scuffed_switch = find_universal_time_conflict(new_meeting)
+    if scuffed_switch == 0:
+        catchloop = [0,0,0]
+        return new_meeting
+    # room meeting conflict
+    elif scuffed_switch == 1: 
+        if debug:
+            print("conflict 1: room and time conflict")
+        for room_it in room.query:
+            if new_meeting.Room_number != str(room_it.Room_number) + " " + room_it.Building:
+               new_meeting.Room_number  = str(room_it.Room_number) + " " + room_it.Building
+               catchloop[2] = catchloop[2] + 1
+               return reccomend_new_meeting_times(new_meeting,catchloop)
+    # employee meeting conflict
+    elif scuffed_switch == 2:
+        if debug:
+            print("conflict 2: Employee time conflict")
+        for  meeting_it in meeting.query:
+            if find_time_conflict(meeting_it,new_meeting) == 1:
+                new_meeting.Start = meeting_it.End + timedelta(minutes=10)
+                new_meeting.End = new_meeting.Start + timedelta(seconds=delta.seconds)
+                catchloop[0] = catchloop[0] + 1
+                return reccomend_new_meeting_times(new_meeting,catchloop)
+        
+    # employee working hours conflict
+    elif scuffed_switch == 3: 
+        if debug:
+            print("conflict 3: working hour conflict")
+        delta =  new_meeting.End - new_meeting.Start 
+        min = datetime.now()
+        for employee_it in new_meeting.People.employees:
+            if min < datetime.combine(datetime(new_meeting.Start.year,new_meeting.Start.month,new_meeting.Start.day,0,0,0,0), employee_it.start_work):
+                min = datetime.combine(datetime(new_meeting.Start.year,new_meeting.Start.month,new_meeting.Start.day,0,0,0,0), employee_it.start_work)
+        new_meeting.Start = datetime(new_meeting.Start.year, new_meeting.Start.month, new_meeting.Start.day, min.hour, min.minute,0,0) + timedelta(minutes=10)
+        new_meeting.End = new_meeting.Start + timedelta(seconds=delta.seconds)
+        catchloop[1] = catchloop[1] + 1
+        return reccomend_new_meeting_times(new_meeting,catchloop)
 
-# ways conflicts occur, they are in the same room, and same time
-# an employee has a working hours conflict
-# an employee has another meeting at that time
+
 # return 0 if there is no time conflict
 # return 1 if there is a room conflict
 # return 2 if there is an employee conflict with another meeting
@@ -410,5 +459,18 @@ def find_time_conflict(meeting1,meeting2):
             return 0
     else: 
         return -1
-    
-# 
+
+def print_all_meetings():
+    for meeting_it in meeting.query:
+        print_meeting_data(meeting_it)
+
+# print meeting data 
+def print_meeting_data(meeting):
+    print("Meeting ID: " + str(meeting.Meeting_id))
+    print("Start Time: " + str(meeting.Start))
+    print("End Time: " + str(meeting.End))
+    print("Room: " + meeting.Room_number)
+    print("Attendies:")
+    for employee_it in meeting.People.employees:
+        print(employee_it.name)
+    print("Description: " + meeting.Description)
