@@ -233,9 +233,17 @@ def populate_database():
         db.session.bulk_save_objects(defaultrooms)
         db.session.commit()
     if (meeting.query.count() == 0):
-        meetings = generate_random_meetings(NUMBER_OF_MEETINGS)
-        db.session.bulk_save_objects(meetings)
+        db.session.add(meeting(
+            Meeting_id = meeting.query.count()+1,
+            Start = datetime(2024, 4, 20, 12, 30, 0, 0),
+            End = datetime(2024, 4, 20, 14, 0, 0, 0),
+            Room_number = "324 Clark building",
+            People = group("testgroup",[employee.query.get(1),employee.query.get(2),employee.query.get(3)]),
+            Description = "Test_meeting: " + str(meeting.query.count()+1)),2)
         db.session.commit()
+        #meetings = generate_random_meetings(NUMBER_OF_MEETINGS)
+        #db.session.bulk_save_objects(meetings)
+        # db.session.commit()
 
 # return a list of employees objects who have time conflicts with the proposed meeting
 def find_meeting_conflicts(new_meeting):
@@ -269,29 +277,62 @@ def find_meeting_conflicts(new_meeting):
                             print("The times:\n" + str(new_meeting.Start) +" to \n"+ str(new_meeting.End) + " conflicts with ")
                             print(str(old_meeting.Start) +" to \n"+ str(old_meeting.End))
     return employee_conflict_list # return the conflict list 
-    
-            
 
-    # check for conflicts with working time (i.e. if the employee does not work at those hours )
+
+# ways conflicts occur, they are in the same room, and same time
+# an employee has a working hours conflict
+# an employee has another meeting at that time
+# return 0 if there is no time conflict
+# return 1 if there is a room conflict
+# return 2 if there is an employee conflict with another meeting
+# return 3 if there is an conflict with employee working hours 
+def find_universal_time_conflict(new_meeting):
+    for  meeting_it in meeting.query:
+        if find_time_conflict(meeting_it,new_meeting) == 1:
+            if (meeting_it.Room_number == new_meeting.Room_number):
+                    if debug:
+                        print("The meeting at time" + str(meeting_it.Start) + " to " + str(meeting_it.End) + " Conflicts with " + str(new_meeting.Start) + " to " + str(new_meeting.End))
+                    return 1
+            for employee_it1 in meeting_it.People.employees:
+                for employee_it2 in new_meeting.People.employees:
+                    if (employee_it1.name == employee_it2.name) and (employee_it1.employee_id == employee_it2.employee_id):
+                        return 2
+    for  employee_it in new_meeting.People.employees:
+        if find_working_hours_conflict(new_meeting,employee_it):
+            return 3                
+    return 0 
+                
+# check for conflicts with working time (i.e. if the employee does not work at those hours )
+# given an input meeting and an input employee, it will find if there is a conflict
+# if there is a conflict it will return 1, else it will return 0, -1 if invalid inputs
+def find_working_hours_conflict(test_meeting,test_employee):
+    if ((type(test_meeting) is meeting) and (type(test_employee) is employee)): 
+        employee_start = datetime.combine(test_meeting.Start,test_employee.start_work)
+        employee_end = datetime.combine(test_meeting.End,test_employee.end_work)
+        if  (test_meeting.End  < employee_end) and (test_meeting.Start > employee_start):
+            return 0
+        else:
+            return 1
+    else: 
+        return -1
 
 # finds conflicts in room scheduling, returns an array of which meetings are conflicting 
 def find_room_conflict(new_meeting):
     Room_conflict_list = []
     for  old_meeting in meeting.query:
-#            if (new_meeting.Room_number == old_meeting.Room_number):
-            if  ((datetime.fromisoformat(str(new_meeting.End))   > datetime.fromisoformat(str(old_meeting.Start)) and 
-                  datetime.fromisoformat(str(new_meeting.Start)) < datetime.fromisoformat(str(old_meeting.End)))  or 
-                 (datetime.fromisoformat(str(new_meeting.End))   < datetime.fromisoformat(str(old_meeting.Start)) and 
-                  datetime.fromisoformat(str(new_meeting.Start)) > datetime.fromisoformat(str(old_meeting.End)))):                                                                
-                 Room_conflict_list.append(old_meeting.Room_number)
+        if(find_time_conflict(new_meeting,old_meeting) == -1):
+            print("One of the meeting objects is invalid")
+            return -1
+        elif  (find_time_conflict(new_meeting,old_meeting)):
+            Room_conflict_list.append(old_meeting.Room_number)
+        
     if len(Room_conflict_list) == 0:
         return -1
     else:
+        # remove duplicate items using set
         Room_conflict_list = set(Room_conflict_list)
         return list(Room_conflict_list)
     
-        
-
 # todo maybe, create another version of this that takes in a masking array that excludes an input array
 def return_room_name_list():
     rooms = []
@@ -331,7 +372,6 @@ def return_all_meeting_Ids():
         return_meetings.append(i.Meeting_id)
     return return_meetings
 
-
 # output is an array of meeting times, the input is 2 dates 
 # on error returns -1 
 # returns in the format starttime||endtime||roomnumber||description||# of employees attending||[List of employees]
@@ -356,3 +396,19 @@ def return_meeting_times(start_date,end_date):
     else:
         print("invalid date time")
         return -1
+    
+# input two meetings and return 0 if there is no conflic and 1 if there is a conflict
+# return -1 if there is a type error
+def find_time_conflict(meeting1,meeting2):
+    if ((type(meeting1) is meeting) and (type(meeting2) is meeting)): 
+        if  ((datetime.fromisoformat(str(meeting1.End))   > datetime.fromisoformat(str(meeting2.Start)) and 
+                datetime.fromisoformat(str(meeting1.Start)) < datetime.fromisoformat(str(meeting2.End)))  or 
+            (datetime.fromisoformat(str(meeting1.End))   < datetime.fromisoformat(str(meeting2.Start)) and 
+                datetime.fromisoformat(str(meeting1.Start)) > datetime.fromisoformat(str(meeting2.End)))):
+            return 1
+        else:
+            return 0
+    else: 
+        return -1
+    
+# 
