@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
 debug = 1
+NUMBER_OF_MEETINGS = 1
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -231,7 +232,7 @@ def populate_database():
         db.session.bulk_save_objects(defaultrooms)
         db.session.commit()
     if (meeting.query.count() == 0):
-        meetings = generate_random_meetings(5)
+        meetings = generate_random_meetings(NUMBER_OF_MEETINGS)
         db.session.bulk_save_objects(meetings)
         db.session.commit()
 
@@ -276,16 +277,19 @@ def find_meeting_conflicts(new_meeting):
 # finds conflicts in room scheduling, returns an array of which meetings are conflicting 
 def find_room_conflict(new_meeting):
     Room_conflict_list = []
-    for i in range(meeting.query.count()):
-            old_meeting = meeting.query.get(i+1)
+    for  old_meeting in meeting.query:
 #            if (new_meeting.Room_number == old_meeting.Room_number):
             if  ((datetime.fromisoformat(str(new_meeting.End))   > datetime.fromisoformat(str(old_meeting.Start)) and 
                   datetime.fromisoformat(str(new_meeting.Start)) < datetime.fromisoformat(str(old_meeting.End)))  or 
                  (datetime.fromisoformat(str(new_meeting.End))   < datetime.fromisoformat(str(old_meeting.Start)) and 
                   datetime.fromisoformat(str(new_meeting.Start)) > datetime.fromisoformat(str(old_meeting.End)))):                                                                
                  Room_conflict_list.append(old_meeting.Room_number)
-
-    return set(Room_conflict_list)
+    if len(Room_conflict_list) == 0:
+        return -1
+    else:
+        return Room_conflict_list
+    
+        
 
 # todo maybe, create another version of this that takes in a masking array that excludes an input array
 def return_room_name_list():
@@ -318,6 +322,14 @@ def return_all_meeting_objects():
     for i in meeting.query:
         return_meetings.append(i)
     return return_meetings
+
+# return a list of all of the meetings
+def return_all_meeting_Ids():
+    return_meetings = []
+    for i in meeting.query:
+        return_meetings.append(i.Meeting_id)
+    return return_meetings
+
 
 # output is an array of meeting times, the input is 2 dates 
 # on error returns -1 
