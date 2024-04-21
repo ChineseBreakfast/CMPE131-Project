@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canvas with Rectangle and Buttons Created Through Script</title>
+<style>
+    .container {
+        position: relative;
+        width: 400px;
+        height: 300px;
+    }
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 1px solid black;
+    }
+
+    .button-overlay {
+        position: absolute;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <div class="container" id="container">
+        <canvas id="myCanvas"></canvas>
+    </div>
+
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+
+        // Define rectangle dimensions
+        var rectX = 50;
+        var rectY = 50;
+        var rectWidth = 200;
+        var rectHeight = 150;
+
+        // Draw rectangle
+        context.fillStyle = 'lightblue';
+        context.fillRect(rectX, rectY, rectWidth, rectHeight);
+
+        // Define number of buttons and their positions
+        var numButtons = 5;
+        var buttonPositions = [
+            { x: rectX + 20, y: rectY + 20 },
+            { x: rectX + 50, y: rectY + 80 },
+            { x: rectX + 100, y: rectY + 120 },
+            { x: rectX + 150, y: rectY + 60 },
+            { x: rectX + 180, y: rectY + 100 }
+        ];
+
+        // Create buttons attached to the rectangle
+        for (var i = 0; i < numButtons; i++) {
+            createButton(buttonPositions[i].x, buttonPositions[i].y, "Button " + (i + 1), handleButtonClick.bind(null, i + 1));
+        }
+
+        // Function to create button elements
+        function createButton(left, top, text, clickHandler) {
+            var button = document.createElement('button');
+            button.textContent = text;
+            button.className = 'button-overlay';
+            button.style.left = left + 'px';
+            button.style.top = top + 'px';
+            button.onclick = clickHandler;
+            document.getElementById('container').appendChild(button);
+            return button;
+        }
+
+        // Function to handle button clicks
+        function handleButtonClick(buttonId) {
+            alert("Button " + buttonId + " clicked!");
+            // Add your button click functionality here
+        }
+    </script>
+</body>
+</html>

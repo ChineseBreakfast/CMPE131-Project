@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resizable Circle on Canvas</title>
+<style>
+    canvas {
+        display: block;
+        border: 1px solid black;
+        margin: auto;
+    }
+</style>
+</head>
+<body>
+    <canvas id="myCanvas"></canvas>
+
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+
+        // Function to draw a circle
+        function drawCircle() {
+            // Set canvas size based on window dimensions
+            canvas.width = window.innerWidth * 0.8; // 80% of window width
+            canvas.height = window.innerHeight * 0.8; // 80% of window height
+
+            // Center coordinates and radius of the circle
+            var centerX = canvas.width / 2;
+            var centerY = canvas.height / 2;
+            var radius = Math.min(centerX, centerY) * 0.8; // 80% of minimum dimension
+
+            // Clear canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the circle
+            context.beginPath();
+            context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            context.fillStyle = 'blue'; // Fill color
+            context.fill(); // Fill the circle
+            context.lineWidth = 2; // Line width
+            context.strokeStyle = 'black'; // Stroke color
+            context.stroke(); // Draw the circle outline
+            context.fillRect(0,5,50,500);
+        }
+
+        // Initial draw
+        drawCircle();
+
+        // Redraw the circle when the window is resized
+        window.addEventListener('resize', drawCircle);
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        body, html {
+        height: 100%;
+        margin: 0;
+    }
+    .container {
+        display: flex;
+        /*overflow-x: auto; /* Allow horizontal scrolling if needed */
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 100%;
+    }
+
+    canvas {
+        image-rendering: pixelated;
+        width: 14.19%; /* Each canvas occupies 1/7th of the container's width */
+        /*height: 30vmax; /* Set a fixed height for the canvas */
+        /*border: 1px solid #000;*/
+    }
+
+    </style>
+    <body>
+        <div>
+            <script>
+                <p id="myId"></p> 
+
+var date = new Date(); 
+var p = document.getElementById("myId"); 
+p.innerHTML = date; 
+ 
+            </script> 
+        </div>
+<div>
+    <head>
+        this
+    </head>
+</div>
+<div class="container" id="container">
+    <canvas id="Monday" style="border:1px solid grey"></canvas>
+    <canvas id="Tuesday" style="border:1px solid grey"></canvas>
+    <canvas id="Wednesday" style="border:1px solid grey"></canvas>
+    <canvas id="Thursday" style="border:1px solid grey"></canvas>
+    <canvas id="Friday" style="border:1px solid grey"></canvas>
+    <canvas id="Saturday" style="border:1px solid grey"></canvas>
+    <canvas id="Sunday"  style="border:1px solid grey"></canvas>
+
+    <script type = text/javascript src="../static/js/bars.js"> </script>
+</div>
+    </body>
+</html>
