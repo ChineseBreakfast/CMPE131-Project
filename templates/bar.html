@@ -2,16 +2,47 @@
 <html>
     <style>
         canvas{display:block; width:80%; object-fit: contain;}
+        .parent{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+.child1{
+    width: 100px;
+    height: 100px;
+    background-color: blanchedalmond;
+}
+
+.child2{
+    width: 100px;
+    height: 100px;
+    background-color: brown;
+}
     </style>
     <body>
-<div>
-    <canvas id="Monday" width="1500" height="100" style="border:1px solid grey"></canvas>
-    <canvas id="Tuesday" width="1500" height="100" style="border:1px solid grey"></canvas>
-    <canvas id="Wednesday" width="1500" height="100" style="border:1px solid grey"></canvas>
-    <canvas id="Thursday" width="1500" height="100" style="border:1px solid grey"></canvas>
-    <canvas id="Friday" width="1500" height="100" style="border:1px solid grey"></canvas>
-    <canvas id="Saturday" width="1500" height="100" style="border:1px solid grey"></canvas>
-    <canvas id="Sunday" width="1500" height="100" style="border:1px solid grey"></canvas>
+        <div>
+            <script>
+                <p id="myId"></p> 
+
+var date = new Date(); 
+var p = document.getElementById("myId"); 
+p.innerHTML = date; 
+ 
+            </script> 
+        </div>
+<div class ="child1">
+    <head>
+        this
+    </head>
+</div>
+<div class="child2">
+    <canvas id="Monday" width="500" height="50" style="border:1px solid grey"></canvas>
+    <canvas id="Tuesday" width="500" height="100p" style="border:1px solid grey"></canvas>
+    <canvas id="Wednesday" width="500" height="100p" style="border:1px solid grey"></canvas>
+    <canvas id="Thursday" width="500" height="100p" style="border:1px solid grey"></canvas>
+    <canvas id="Friday" width= "50%" height="100p" style="border:1px solid grey"></canvas>
+    <canvas id="Saturday" width="50%" height="100p" style="border:1px solid grey"></canvas>
+    <canvas id="Sunday" width="50%" height="100p" style="border:1px solid grey"></canvas>
 
     <script type = text/javascript src="../static/js/bars.js"> </script>
 </div>
