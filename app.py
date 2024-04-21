@@ -51,6 +51,15 @@ class groupdb(db.Model):
     Group_ID = db.Column(db.Integer, primary_key = True)
     People = db.Column(db.PickleType, nullable = False)
 
+
+def setglobal(value):
+    global global_meeting
+    global_meeting = value
+
+def setsave(value):
+    global save_meeting
+    save_meeting = value
+
 @app.route("/")    
 def home():
     populate_database()
@@ -61,21 +70,36 @@ def home():
 # route for meeting form submit
 @app.route('/input_meeting', methods = ["GET","POST"])
 def data_submit1():
+    alert = [-1,"0"]
+
+    # "GET" is used if an error is found and the user needs to change their meeting
+    if request.method == "GET":
+        answer = request.values.get('response')
+        if (answer == '1'):
+            db.session.add(global_meeting)
+            db.session.commit()
+        elif(answer == '2'):
+            db.session.add(save_meeting)
+            db.session.commit()
+        setsave(meeting())
+        setglobal(meeting())
+            
     if request.method == "POST":
 
         # initialize the less complicated data
-        start = request.form.get("Start")
-        start = datetime.fromisoformat(start)
+        start = datetime.fromisoformat(request.form.get("Start"))
         end = datetime.fromisoformat(request.form.get("End"))
         room_number = request.form.get("Room_select")
         meeting_description = request.form.get("Meeting_description")
 
         # check for errors in time inputs 
-        if start > end:
-            error_message = "Start time can not be after end time"
-            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), error_message = error_message)
-        # todo add some kind of message to tell the user that the time is invalid 
-        # this should probably be done in javascript 
+        delta =  end-start
+        if delta < timedelta(seconds=0):
+            error_message = (4,"Start time can not be after end time")
+            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = error_message)
+        if delta > timedelta(hours = 8):
+            error_message = (5,"Your meeting is too long, and will not be able to fit in any schedule, please consider breaking this into multiple meetings")
+            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = error_message)
         
         # we initialize the names from the form submission into employee objects that we can pass to the schedule checking function
         names = request.form.getlist("select")
@@ -89,39 +113,48 @@ def data_submit1():
 
         # Create a new object with the data from the form submission, then commit it to the database
         new_meeting = meeting(Meeting_id = meeting.query.count()+1, Start = start, End = end, Room_number = room_number, People = names_object, Description = meeting_description)
-
-        # Find conflicting employee times
-        employee_conflict_bool = 0
-        employee_conflict_list = find_meeting_conflicts(new_meeting)
-        # Todo create some way to inform the user of the employees who have time conflicts 
-
-        # Finds room conflicting times and creates an array of rooms that will not have a time conflict 
-        room_conflict_bool = 0 
-        Room_conflict_list = find_room_conflict(new_meeting)
-        new_room_list = return_room_name_list()
-        if Room_conflict_list != -1:
-            for i in Room_conflict_list:
-                for j in new_room_list:
-                    if(i == j):
-                        new_room_list.remove(j)
-                        room_conflict_bool = 1
-        if room_conflict_bool == 1 and room_number == "-1":
-        # Will reload the page with only the rooms avaliable for that time, maybe there is a better way to do this without reloading the page
-        # But I haven't found out how to do it yet without a form resubmit 
-            return render_template('input.html', rooms = new_room_list, info = return_employee_name_list())
-        else:
-        # If the user left the field blank, then the program will assign them a Room from the valid room list
-            if room_number == "-1": 
-                new_meeting.Room_number = new_room_list[1]
-        # later if we give the employee object an assigned building we could assign them a room for the building they're in 
-            db.session.add(new_meeting)
-            db.session.commit()
+        
+        # find any time conflicts with the new meeting
+        conflict = find_universal_time_conflict(new_meeting)
+        if conflict != 0:
+            recommended_meeting = reccomend_new_meeting_times(new_meeting, [0,0,0])
             
-    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list())
+            # we will use global variables to save our meeting objects during the context switch from python to javascript
+            setsave(new_meeting)
+            setglobal(recommended_meeting)
+            
+            # 1 if there is a room conflict
+            if (conflict == 1):               
+                alert[0] = 1
+                alert[1] = "There is a room conflict at this time, would you like to reschedule the meeting for this start time: " + str(recommended_meeting.Start) + " ?"
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert)
+            
+            # 2 if there is an employee conflict with another meeting
+            elif(conflict == 2):
+                employee_conflict_list = find_meeting_conflicts(new_meeting)
+                alert[0] = 2
+                alert[1] = "The following employees have meetings at this time:"
+                for employee_it in employee_conflict_list:
+                    alert[1] = alert[1] + str(employee_it) + " "
+                alert[1] = alert[1] + ", would you like to reschedule the meeting for this start time: "  + str(recommended_meeting.Start) + " ?"
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert)
+            
+            # 3 if there is an conflict with employee working hours 
+            elif(conflict == 3):
+                alert[0] = 3
+                alert[1] = "There is a working hours conflict at this time, would you like to reschedule the meeting for this start time: " + str(recommended_meeting.Start) + " ?"
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert)
+            # return 0 if there is no time conflict 
+        else:
+            db.session.add(new_meeting)
+            db.session.commit()    
+            
+    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert)
 
 # route from employee form submit
 @app.route('/input_employee', methods = ["GET","POST"])
 def data_submit2():
+    alert = -1
     if request.method == "POST": 
         name = request.form.get("name")
         password = request.form.get("password")
@@ -133,11 +166,12 @@ def data_submit2():
         new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = time(int(start_work[0]),int(start_work[1]),0,0), end_work= time(int(end_work[0]),int(end_work[1]),0,0), Password = password)
         db.session.add(new_employee)
         db.session.commit()
-    return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list())
+    return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert)
          
 # route from room form submit
 @app.route('/input_Room', methods = ["GET","POST"])
 def data_submit3():
+    alert = (-1,"0")
     if request.method == "POST": 
         found = 0 
         Room_number = request.form.get("Room Number")
@@ -152,7 +186,7 @@ def data_submit3():
             new_room = room(Room_number = Room_number, Building = Building)
             db.session.add(new_room)
             db.session.commit()
-    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list())
+    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = (3,alert))
       
 
 @app.route('/login', methods = ["GET","POST"])
@@ -166,7 +200,7 @@ def hello_there():
         for i in range(employee.query.count()):
             info = employee.query.get(i+1)
             if (info.name == username) and (info.Password == password):
-                return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list())
+                return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(), alert=[-1,"1"])
 
 @app.route('/get_valid_rooms', methods = ["PATCH"])
 def return_valid_rooms():
@@ -300,6 +334,7 @@ def reccomend_new_meeting_times(new_meeting,catchloop):
     elif scuffed_switch == 1: 
         if debug:
             print("conflict 1: room and time conflict")
+            print("New meeting Time" + str(new_meeting.Start))
         for room_it in room.query:
             if new_meeting.Room_number != str(room_it.Room_number) + " " + room_it.Building:
                new_meeting.Room_number  = str(room_it.Room_number) + " " + room_it.Building
@@ -309,6 +344,7 @@ def reccomend_new_meeting_times(new_meeting,catchloop):
     elif scuffed_switch == 2:
         if debug:
             print("conflict 2: Employee time conflict")
+            print("New meeting Time" + str(new_meeting.Start))
         for  meeting_it in meeting.query:
             if find_time_conflict(meeting_it,new_meeting) == 1:
                 new_meeting.Start = meeting_it.End + timedelta(minutes=10)
@@ -320,6 +356,7 @@ def reccomend_new_meeting_times(new_meeting,catchloop):
     elif scuffed_switch == 3: 
         if debug:
             print("conflict 3: working hour conflict")
+            print("New meeting Time" + str(new_meeting.Start))
         delta =  new_meeting.End - new_meeting.Start 
         min = datetime.now()
         for employee_it in new_meeting.People.employees:

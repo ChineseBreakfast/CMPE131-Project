@@ -15,9 +15,72 @@
         display: inline-block;
         width:150px;
     }</style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
+
+    <script>
+        a = 0;
+        var title = "";
+        var alert = '{{ alert | tojson}}'
+        alert = JSON.parse(alert);
+        alert_type = alert[0]
+        alert_message = alert[1];
+        if (alert_type != -1)
+        {
+        switch(alert_type){
+        case 1:
+        title = "Room Conflict";
+        break
+
+        case 2:
+        title = "Employee time Conflict";
+        break
+
+        case 3:
+        title = "Employee Working hours Conflict";
+        break
+       
+        case 4: 
+        title = "Date Conflict";
+        break
+
+        case 5:
+        title = "Meeting too long"
+        break
+        }
+        swal.fire({
+            title: title,
+            text: alert_message,
+            icon: 'warning',
+            allowEscapeKey: 'true',
+            showConfirmButton: 'true',
+            showDenyButton: 'true',
+            showCancelButton: 'true',
+            confirmButtonText: 'Reschedule',
+            denyButtonText: 'Accept Conflict',
+            cancelButtonText: 'Cancel Meeting'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                a = 1;
+            }
+            else if (result.isDenied) {
+                a = 2;
+            }
+            $.ajax({ 
+                url: '/input_meeting', 
+                type: 'GET', 
+                data: {'response' : a},
+                success: function(response){ 
+                $('#main').text(response)} 
+                })
+        })
+    }
+ 
+    </script>
+    
     <div id = "mainbox">
     <div id = "smallbox">
 
@@ -44,26 +107,13 @@
                     }
                 </script>
                 <div id = "addmenu" class = "tabcontent">
-
-
-
                     <!--form for adding meeting info-->
                     <h2>Enter Meeting</h2>
-                    <form action="/input_meeting" method="POST" class="mt-3">
+                    <form action="/input_meeting" method="POST" class="mt-3" id = "formID">
                         <div class="popup" onsubmit="myFunction()">
                             <span class="popuptext" id="myPopup"></span>
                           </div>
-                          <script>
-                            // When the user clicks on <div>, open the popup
-                            function myFunction() {
-                            var names = '{{ info | tojson}}';
-                              names = JSON.parse(names);
-                              var popup = document.getElementById("myPopup");
-                              
-                              popup.classList.
-                            }
-
-                            </script>
+                    
                         <!-- Participant selection  -->
                         <div class="form-group">
                             <div id = "selection">
@@ -140,6 +190,7 @@
                           }
                         }
                     </script>
+                    
 
 
 
