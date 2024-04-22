@@ -65,10 +65,11 @@ def setsave(value):
 @app.route("/")    
 def home():
     populate_database()
-    meeting_list = return_meeting_times(datetime.now(),datetime.now()+timedelta(days=2))
+    meeting_list = return_meeting_times(datetime.now(),datetime.now()+timedelta(days=7))
+    meeting_list = json.dumps(meeting_list)
     if debug:
             print_all_meetings()
-    return render_template('index.html')
+    return render_template('index.html',meeting_list =meeting_list)
 
 # route for meeting form submit
 @app.route('/input_meeting', methods = ["GET","POST"])
