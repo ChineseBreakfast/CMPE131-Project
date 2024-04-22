@@ -3,7 +3,7 @@ style.setAttribute("id","multiselect_dropdown_styles");
 style.innerHTML = `
 .multiselect-dropdown{
   display: inline-block;
-  padding: 2px 50px 0px 5px;
+  padding: 2px 100px 0px 5px;
   border-radius: 4px;
   border: solid 1px #ced4da;
   background-color: white;
@@ -56,7 +56,7 @@ style.innerHTML = `
 .multiselect-dropdown-list{
   padding:2px;
   height: 15rem;
-  overflow-y:auto;
+  overflow-y:true;
   overflow-x: hidden;
 }
 .multiselect-dropdown-list::-webkit-scrollbar {
