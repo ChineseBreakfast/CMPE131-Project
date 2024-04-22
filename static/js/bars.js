@@ -108,6 +108,15 @@
             }
             //window.addEventListener('resize', domloaded);
         }
+    function barPosition(dateTimeStart) {
+        var date1 = new Date('2024-01-01T' + dateTimeStart + 'Z'); 
+        var date2 = new Date('2024-01-01T' + `00:00:00` + 'Z');
+        var differenceMs = date1.getTime() - date2.getTime();
+        var hours = differenceMs / (1000 * 60 * 60);
+        var pos = 150 * (hours/24);
+        return pos;
+    }
+
     function parceSize(dateTimeStart, dateTimeEnd){
         /*Range Date*/
         // Parse the time strings into Date objects
