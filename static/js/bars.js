@@ -1,25 +1,34 @@
         
     document.addEventListener('DOMContentLoaded',domloaded,false);
     function domloaded(){
+            
+            //var MeetingsM = parceMeetingTimes(1, /*python function here*/);
+            //var MeetingsT = parceMeetingTimes(2, /*python function here*/);
+            //var MeetingsW = parceMeetingTimes(3, /*python function here*/);
+            //var MeetingsTh = parceMeetingTimes(4, /*python function here*/);
+            //var MeetingsF = parceMeetingTimes(5, /*python function here*/);
+            //var MeetingsSa = parceMeetingTimes(6, /*python function here*/);
+            //var MeetingsSu = parceMeetingTimes(0, /*python function here*/);
+            //console.log("Meetings: ", MeetingsM);
 
             const cM = document.getElementById("Monday");
             const ctxM = cM.getContext("2d");
-            ctxM.width = window.innerWidth * 0.1419; // 80% of window width
-            ctxM.height = window.innerHeight * 0.8; // 80% of window height
+            //ctxM.width = window.innerWidth * 0.1419; // 80% of window width
+            //ctxM.height = window.innerHeight * 0.5; // 80% of window height
             x = 150;
             offset = 10;
             for (let i = 0; i < 3; i++) {
                 ctxM.fillStyle = "red";
                 ctxM.fillRect(offset, 0, 20, x);
-                offset = offset + 22;
+                offset = offset + 25;
             }
 
             
-
+            
             const cT = document.getElementById("Tuesday");
             const ctxT = cT.getContext("2d");
             //ctxT.width = window.innerWidth * 0.1419; // 80% of window width
-            ctxT.height = window.innerHeight * 0.8; // 80% of window height
+            //ctxT.height = window.innerHeight * 0.5; // 80% of window height
             x = 200;
             offset = 0;
             for (let i = 0; i < 3; i++) {
@@ -33,7 +42,7 @@
             const cW = document.getElementById("Wednesday");
             const ctxW = cW.getContext("2d");
             //ctxW.width = window.innerWidth * 0.1419; // 80% of window width
-            ctxW.height = window.innerHeight * 0.8; // 80% of window height
+            //ctxW.height = window.innerHeight * 0.50; // 80% of window height
             x = 200;
             offset = 0;
             for (let i = 0; i < 3; i++) {
@@ -47,7 +56,7 @@
             const cTh = document.getElementById("Thursday");
             const ctxTh = cTh.getContext("2d");
             //ctxTh.width = window.innerWidth * 0.1419; // 80% of window width
-            ctxTh.height = window.innerHeight * 0.8; // 80% of window height
+            //ctxTh.height = window.innerHeight * 0.50; // 80% of window height
             x = 200;
             offset = 0;
             for (let i = 0; i < 3; i++) {
@@ -61,7 +70,7 @@
             const cF = document.getElementById("Friday");
             const ctxF = cF.getContext("2d");
             //ctxF.width = window.innerWidth * 0.1419; // 80% of window width
-            ctxF.height = window.innerHeight * 0.8; // 80% of window height
+            //ctxF.height = window.innerHeight * 0.50; // 80% of window height
             x = 200;
             offset = 0;
             for (let i = 0; i < 3; i++) {
@@ -75,7 +84,7 @@
             const cSa = document.getElementById("Saturday");
             const ctxSa = cSa.getContext("2d");
             //ctxSa.width = window.innerWidth * 0.1419; // 80% of window width
-            ctxSa.height = window.innerHeight * 0.8; // 80% of window height
+            //ctxSa.height = window.innerHeight * 0.50; // 80% of window height
             x = 200;
             offset = 0;
             for (let i = 0; i < 3; i++) {
@@ -89,7 +98,7 @@
             const cSu = document.getElementById("Sunday");
             const ctxSu = cSu.getContext("2d");
             //ctxSu.width = window.innerWidth * 0.1419; // 80% of window width
-            ctxSu.height = window.innerHeight * 0.8; // 80% of window height
+            //ctxSu.height = window.innerHeight * 0.50; // 80% of window height
             x = 200;
             offset = 0;
             for (let i = 0; i < 3; i++) {
@@ -97,7 +106,7 @@
                 ctxSu.fillRect(20, offset, x, 5);
                 offset = offset + 6;
             }
-            window.addEventListener('resize', domloaded);
+            //window.addEventListener('resize', domloaded);
         }
     function parceSize(dateTimeStart, dateTimeEnd){
         /*Range Date*/

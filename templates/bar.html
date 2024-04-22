@@ -9,44 +9,55 @@
         display: flex;
         /*overflow-x: auto; /* Allow horizontal scrolling if needed */
         border: 1px solid #ccc;
-        padding: 10px;
+        padding: 1px;
         height: 100%;
+        flex-direction: row;
+        justify-content: center;
+    }
+    .column {
+        text-align: center;
+        margin: 0px;
     }
 
     canvas {
         image-rendering: pixelated;
-        width: 14.19%; /* Each canvas occupies 1/7th of the container's width */
-        /*height: 30vmax; /* Set a fixed height for the canvas */
+        width: 100%; /* Each canvas occupies 1/7th of the container's width */
+        height: 90%; /* Set a fixed height for the canvas */
         /*border: 1px solid #000;*/
     }
 
     </style>
     <body>
-        <div>
-            <script>
-                <p id="myId"></p> 
-
-var date = new Date(); 
-var p = document.getElementById("myId"); 
-p.innerHTML = date; 
- 
-            </script> 
+        <div class="container">
+            <div class="column">
+                <h2>Monday</h2>
+                <canvas id="Monday" style="border:1px solid grey"></canvas>
+            </div>
+            <div class="column">
+                <h2>Tuesday</h2>
+                <canvas id="Tuesday" style="border:1px solid grey"></canvas>
+            </div>
+            <div class="column">
+                <h2>Wednesday</h2>
+                <canvas id="Wednesday" style="border:1px solid grey"></canvas>
+            </div>
+            <div class="column">
+                <h2>Thrursday</h2>
+                <canvas id="Thursday" style="border:1px solid grey"></canvas>
+            </div>
+            <div class="column">
+                <h2>Friday</h2>
+                <canvas id="Friday" style="border:1px solid grey"></canvas>
+            </div>
+            <div class="column">
+                <h2>Saturday</h2>
+                <canvas id="Saturday" style="border:1px solid grey"></canvas>
+            </div>
+            <div class="column">
+                <h2>Sunday</h2>
+                <canvas id="Sunday"  style="border:1px solid grey"></canvas>
+            </div>
+            <script type = text/javascript src="../static/js/bars.js"> </script>
         </div>
-<div>
-    <head>
-        this
-    </head>
-</div>
-<div class="container" id="container">
-    <canvas id="Monday" style="border:1px solid grey"></canvas>
-    <canvas id="Tuesday" style="border:1px solid grey"></canvas>
-    <canvas id="Wednesday" style="border:1px solid grey"></canvas>
-    <canvas id="Thursday" style="border:1px solid grey"></canvas>
-    <canvas id="Friday" style="border:1px solid grey"></canvas>
-    <canvas id="Saturday" style="border:1px solid grey"></canvas>
-    <canvas id="Sunday"  style="border:1px solid grey"></canvas>
-
-    <script type = text/javascript src="../static/js/bars.js"> </script>
-</div>
     </body>
 </html>
