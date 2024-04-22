@@ -60,9 +60,12 @@ def setsave(value):
     global save_meeting
     save_meeting = value
 
+
+
 @app.route("/")    
 def home():
     populate_database()
+    meeting_list = return_meeting_times(datetime.now(),datetime.now()+timedelta(days=2))
     if debug:
             print_all_meetings()
     return render_template('index.html')
@@ -189,8 +192,10 @@ def data_submit3():
     return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = (3,alert))
       
 
+
+
 @app.route('/login', methods = ["GET","POST"])
-def hello_there():
+def hello_there():  
     if request.method == "POST":
         return_meeting_times(datetime.now(), datetime.now()+timedelta(days= 1, hours = 2))
         username = request.form.get("username")
@@ -200,7 +205,8 @@ def hello_there():
         for i in range(employee.query.count()):
             info = employee.query.get(i+1)
             if (info.name == username) and (info.Password == password):
-                return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(), alert=[-1,"1"])
+
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = [-1,"0"])
 
 @app.route('/get_valid_rooms', methods = ["PATCH"])
 def return_valid_rooms():
@@ -460,7 +466,7 @@ def return_all_meeting_Ids():
 
 # output is an array of meeting times, the input is 2 dates 
 # on error returns -1 
-# returns in the format starttime||endtime||roomnumber||description||# of employees attending||[List of employees]
+# returns
 def return_meeting_times(start_date,end_date):
     return_meeting_objects = []
     #check if the inputs are valid datetime objects 
@@ -473,11 +479,19 @@ def return_meeting_times(start_date,end_date):
             for i in meeting.query:
                  # check if that meeting fits within the 2 dates provided 
                 if ((i.Start > start_date) and (i.End < end_date)):
-                    tempstring = str(i.Start) +"||"+ str(i.End)+"||"+i.Room_number+"||"+i.Description+"||"+str(len(i.People.employees))+"||"
-                    # itterate through all employees registered for that meeting 
+                    employee_list = []
                     for j in i.People.employees: 
-                        tempstring = tempstring + j.name +","
-                    return_meeting_objects.append(tempstring)
+                       employee_list.append(j.name)
+                    tempstring = {
+                        'start' : str(i.Start),
+                        'end' : str(i.End),
+                        'Room_number': i.Room_number,
+                        'Description':i.Description,
+                        'employee_number' : len(i.People.employees),
+                        'attendies' : employee_list
+                    }
+                    # itterate through all employees registered for that meeting 
+                    return_meeting_objects.append(json.dumps(tempstring))
             return return_meeting_objects
     else:
         print("invalid date time")
@@ -511,3 +525,5 @@ def print_meeting_data(meeting):
     for employee_it in meeting.People.employees:
         print(employee_it.name)
     print("Description: " + meeting.Description)
+
+    
