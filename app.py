@@ -65,11 +65,12 @@ def setsave(value):
 @app.route("/")    
 def home():
     populate_database()
-  #  week_start = datetime.now().isoweekday()
-  #  delta_day = week_start - 1
-  # mon_date = datetime(year = datetime.now().year, month = datetime.now().month, day =datetime.now.day) + timedelta(days = week_start)
+    week_start = datetime.now().isoweekday()
+    delta_day = week_start - 1
+    mon_date = datetime(year = datetime.now().year, month = datetime.now().month, day = datetime.now().day) - timedelta(days= delta_day)
     meeting_list = return_meeting_times(datetime.now(),datetime.now()+timedelta(days=7))
     meeting_list = json.dumps(meeting_list)
+    get_week_meetings(datetime.now()+timedelta(days = 6))
     if debug:
             print_all_meetings()
     return render_template('index.html',meeting_list =meeting_list)
@@ -91,6 +92,7 @@ def data_submit1():
         setsave(meeting())
         setglobal(meeting())
             
+    # When the user posts a meeting
     if request.method == "POST":
 
         # initialize the less complicated data
@@ -161,7 +163,7 @@ def data_submit1():
 # route from employee form submit
 @app.route('/input_employee', methods = ["GET","POST"])
 def data_submit2():
-    alert = -1
+    alert = [-1,"0"]
     if request.method == "POST": 
         name = request.form.get("name")
         password = request.form.get("password")
@@ -170,10 +172,20 @@ def data_submit2():
         start_work = start_work.split(':')
         end_work = request.form.get("end_work")
         end_work = end_work.split(':')
-        new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = time(int(start_work[0]),int(start_work[1]),0,0), end_work= time(int(end_work[0]),int(end_work[1]),0,0), Password = password)
+        start_work = time(int(start_work[0]),int(start_work[1]),0,0)
+        end_work = time(int(end_work[0]),int(end_work[1]),0,0)
+        if (int(age) < 0 or int(age) > 120):
+            alert[0] = 6
+            alert[1] = "That is not a valid age for an employee:"
+            return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert,meeting_list = return_all_meetings())
+        if (start_work > end_work):
+            alert[0] = 7
+            alert[1] = "Those are not valid working hours for an employee:"
+            return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert,meeting_list = return_all_meetings())
+        new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = start_work, end_work = end_work, Password = password)
         db.session.add(new_employee)
         db.session.commit()
-    return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert)
+    return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert,meeting_list = return_all_meetings())
          
 # route from room form submit
 @app.route('/input_Room', methods = ["GET","POST"])
@@ -226,7 +238,7 @@ if __name__ == '__main__':
 
 
 def return_all_meetings():
-    return return_meeting_times(datetime.min,datetime.max)
+    return json.dumps(return_meeting_times(datetime.min,datetime.max))
 def generate_random_meetings(number):
     random_meetings = []
     for meeting_number in range(0,number):
@@ -521,6 +533,16 @@ def find_time_conflict(meeting1,meeting2):
 def print_all_meetings():
     for meeting_it in meeting.query:
         print_meeting_data(meeting_it)
+
+
+# given a day, the function will return all of the meeting objects for that week 
+def get_week_meetings(day):
+    #todo, check that day is valid date object
+    week_start = day.isoweekday()
+    delta_day = week_start - 1
+    mon_date = datetime(year = datetime.now().year, month = datetime.now().month, day = datetime.now().day) - timedelta(days= delta_day)
+    return return_meeting_times(mon_date,mon_date+timedelta(days=7))
+
 
 # print meeting data 
 def print_meeting_data(meeting):

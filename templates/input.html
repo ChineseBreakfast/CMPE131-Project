@@ -41,12 +41,11 @@
     <script>
         a = 0;
         var title = "";
-        var alert = '{{ alert | tojson}}'
+        var alert = '{{ alert | tojson}}';
         alert = JSON.parse(alert);
-        alert_type = alert[0]
+        alert_type = alert[0];
         alert_message = alert[1];
-        if (alert_type != -1)
-        {
+        if (alert_type != -1) {
         switch(alert_type){
         case 1:
         title = "Room Conflict";
@@ -67,7 +66,15 @@
         case 5:
         title = "Meeting too long"
         break
+
+        case 6:
+        title = "Invalid Age";
+        break
+
+        case 7:
+        break
         }
+        if (alert_type <= 5){
         swal.fire({
             title: title,
             text: alert_message,
@@ -95,7 +102,15 @@
                 })
         })
     }
- 
+    if (alert_type > 5){
+        swal.fire({
+            title: title,
+            text: alert_message,
+            icon: 'warning',
+            allowEscapeKey: 'true',
+    });
+    }
+}
     </script>
     
     <div id = "mainbox">

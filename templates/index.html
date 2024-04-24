@@ -6,7 +6,16 @@
         <title>Login</title>
     </head>
     <body>
-
+        <script>
+        var meeting_list = {{ meeting_list | tojson}};
+	    meeting_list = JSON.parse(meeting_list);
+        for (let i = 0; i < meeting_list.length; i++){
+        meeting_list[i] = JSON.parse(meeting_list[i]);
+        }
+	    start_time = meeting_list[0].start;
+        employee_array = meeting_list[0].attendies;
+        var a = 1;
+    </script>
         <div id = "box">
             <h1>Login</h1>
                 <!--Insert a Link [title = text in hover] [target = open up in new page]-->
