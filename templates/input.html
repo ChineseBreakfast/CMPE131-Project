@@ -20,9 +20,25 @@
 </head>
 
 <body>
+    <!--                'start' : str(i.Start),
+                        'end' : str(i.End),
+                        'Room_number': i.Room_number,
+                        'Description':i.Description,
+                        'employee_number' : len(i.People.employees),
+                        'attendies' : employee_list
+    -->
+    <script>
+        var meeting_list = {{ meeting_list | tojson}};
+	    meeting_list = JSON.parse(meeting_list);
+        for (let i = 0; i < meeting_list.length; i++){
+        meeting_list[i] = JSON.parse(meeting_list[i]);
+        }
+	    start_time = meeting_list[0].start;
+        employee_array = meeting_list[0].attendies;
+        var a = 1;
+    </script>
 
     <script>
-        json.parse(alert[1])
         a = 0;
         var title = "";
         var alert = '{{ alert | tojson}}'
@@ -118,7 +134,7 @@
                         <!-- Participant selection  -->
                         <div class="form-group">
                             <div id = "selection">
-                                <select name="select" list="namesDataList" id="namesInput"  multiple multiselect-search = "true">
+                                <select name="select" list="namesDataList" id="namesInput"  multiple multiselect-search = "true" multiselect-hide-x = "true" >
                                 </select>
                                 <script>
                                     // import the names and convert it to an array using JSON

@@ -65,6 +65,9 @@ def setsave(value):
 @app.route("/")    
 def home():
     populate_database()
+  #  week_start = datetime.now().isoweekday()
+  #  delta_day = week_start - 1
+  # mon_date = datetime(year = datetime.now().year, month = datetime.now().month, day =datetime.now.day) + timedelta(days = week_start)
     meeting_list = return_meeting_times(datetime.now(),datetime.now()+timedelta(days=7))
     meeting_list = json.dumps(meeting_list)
     if debug:
@@ -100,10 +103,10 @@ def data_submit1():
         delta =  end-start
         if delta < timedelta(seconds=0):
             error_message = (4,"Start time can not be after end time")
-            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = error_message)
+            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = error_message,meeting_list = return_all_meetings())
         if delta > timedelta(hours = 8):
             error_message = (5,"Your meeting is too long, and will not be able to fit in any schedule, please consider breaking this into multiple meetings")
-            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = error_message)
+            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = error_message,meeting_list = return_all_meetings())
         
         # we initialize the names from the form submission into employee objects that we can pass to the schedule checking function
         names = request.form.getlist("select")
@@ -131,7 +134,7 @@ def data_submit1():
             if (conflict == 1):               
                 alert[0] = 1
                 alert[1] = "There is a room conflict at this time, would you like to reschedule the meeting for this start time: " + str(recommended_meeting.Start) + " ?"
-                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert)
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
             
             # 2 if there is an employee conflict with another meeting
             elif(conflict == 2):
@@ -141,19 +144,19 @@ def data_submit1():
                 for employee_it in employee_conflict_list:
                     alert[1] = alert[1] + str(employee_it) + " "
                 alert[1] = alert[1] + ", would you like to reschedule the meeting for this start time: "  + str(recommended_meeting.Start) + " ?"
-                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert)
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
             
             # 3 if there is an conflict with employee working hours 
             elif(conflict == 3):
                 alert[0] = 3
                 alert[1] = "There is a working hours conflict at this time, would you like to reschedule the meeting for this start time: " + str(recommended_meeting.Start) + " ?"
-                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert)
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
             # return 0 if there is no time conflict 
         else:
             db.session.add(new_meeting)
             db.session.commit()    
             
-    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert)
+    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
 
 # route from employee form submit
 @app.route('/input_employee', methods = ["GET","POST"])
@@ -190,7 +193,7 @@ def data_submit3():
             new_room = room(Room_number = Room_number, Building = Building)
             db.session.add(new_room)
             db.session.commit()
-    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = (3,alert))
+    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = (3,alert),meeting_list = return_all_meetings())
       
 
 
@@ -207,7 +210,7 @@ def hello_there():
             info = employee.query.get(i+1)
             if (info.name == username) and (info.Password == password):
 
-                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = [-1,"0"])
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = [-1,"0"],  meeting_list = return_all_meetings())
 
 @app.route('/get_valid_rooms', methods = ["PATCH"])
 def return_valid_rooms():
@@ -221,6 +224,9 @@ def return_valid_rooms():
 if __name__ == '__main__':
     app.run(debug=True)
 
+
+def return_all_meetings():
+    return return_meeting_times(datetime.min,datetime.max)
 def generate_random_meetings(number):
     random_meetings = []
     for meeting_number in range(0,number):

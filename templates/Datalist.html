@@ -6,7 +6,7 @@
 
 <body>
 	<script>
-		var alert = {{ alert | tojson}};
+		var alert = { alert , tojson};
 		// alert = JSON.stringify(alert);
 	    alert = JSON.parse(alert);
 		jsonobj = alert.name;
