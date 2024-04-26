@@ -61,6 +61,7 @@ def setsave(value):
     save_meeting = value
 
 
+@app.route('/main', methods = ["GET","POST"])
 
 @app.route("/")    
 def home():

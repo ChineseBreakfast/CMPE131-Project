@@ -2,6 +2,8 @@
 
 const date = new Date();
 
+list = meeting_list[1];
+
 const renderCalendar = () => {
     
     date.setDate(1);
@@ -75,7 +77,13 @@ document.querySelector('.days ').addEventListener('click', function(e) {
     year = date.getFullYear();
     month = date.getMonth();
     day = parseInt(text);
-    let a = 1;
+    $.ajax({ 
+        url: '/input_meeting', 
+        type: 'GET', 
+        data: {'response' : year,month,day},
+        success: function(response){ 
+        $('#main').text(response)} 
+        })
 }, false);
 
 
@@ -92,6 +100,30 @@ document.querySelector('.next').addEventListener('click',() => {
     renderCalendar();
 });
 
+function return_weeks_meetings(input_day){
+    const returnarray = [];
+    // Get beginning of the week
+    minday = new Date(input_day.getFullYear(),input_day.getMonth(),input_day.getDate()-input_day.getDay());
+    // Get the end of the week
+    maxday = new Date(input_day.getFullYear(),input_day.getMonth(),input_day.getDate()-input_day.getDay()+7);
+    
 
+    // Go through all of the meetings and find which ones fit into the two dates 
+    for(i = 0; i < meeting_list.length; i++){
+        start = new Date(meeting_list[i].start);
+        end = new Date(meeting_list[i].end);
+        if (start >= minday && end <= maxday ){
+            returnarray.push(meeting_list[i])
+        }
+    }
+    return returnarray;
+}
 
 renderCalendar();
+const today = new Date();
+
+
+
+// This arrangement can be altered based on how we want the date's format to appear.
+
+return_weeks_meetings(today);
