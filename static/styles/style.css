@@ -48,19 +48,17 @@ p{
     height: 300px;
     background-color: rgb(255, 255, 255,.3);
 
-   
 }
 
 
 
   .container {
     width: 28.25%;
-    height: 40vh;
+    height: 40%;
     justify-content: center;
-    align-items: center;   
-    position:relative;
+    position:inherit;
     left: 1%;
-    top:1%;
+    top: 1%;
   }
   .calendar{
     border-radius: 10px;
@@ -203,7 +201,6 @@ input[type=reset]:hover{
     width: 1600px;
     height: 1000px;
     background-color: rgb(255, 255, 255);
-    position:static
 
 }
 #div1 {
@@ -220,20 +217,24 @@ input[type=reset]:hover{
    font-family: "sans-serif";
 }
 /*menus*/
-#menus{ 
-    width: 450px;
-    height: 575px;
-    border: none;
-    border-radius: 25px;
+.menus{ 
+    width: 28.5%;
+    height: 60%;
+    border-radius: 15px;
     background-color: rgba(190, 193, 204, 0.774);
-    margin-top: 1%;
-    margin-left: 1%;
-    
+    display:flex;
+    float:left;
+    position:inherit;
+    justify-content:center;
+    left: 1%;
+    bottom: 1%;
+
 }
 
 
 
 #text{
+  position:inherit;
     margin-left: 10px;
     font-family: "consolas";
 }
@@ -373,4 +374,49 @@ button[type=submit]:hover{
   opacity: 1;
 }
 
-/* Name, Age, start time, end time */
+.container1 {
+    display: flex;
+    /*overflow-x: auto; /* Allow horizontal scrolling if needed */
+    padding: 1px;
+    height: 100%;
+    width: 70%;
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+    float:right;
+    top: -40%;
+    right: 1%;
+    background-color: rgba(190, 193, 204, 0.774);
+    border-radius: 10px;
+}
+.column {
+    text-align: center;
+    background-color: rgb(68, 158, 123);
+    transition: background-color 0.2s;
+    border-radius: 10px;
+}
+
+.column:hover{
+  background-color: rgb(68, 158, 123);
+  border: .2rem solid rgb(68, 158, 123);
+  
+}
+.column h2{
+   color: rgb(255, 255, 255);
+   text-shadow: 0 0.3rem .5rem rgba(0, 0, 0, 0.137);
+}
+.column p1{
+  color: rgb(255, 255, 255);
+  text-shadow: 0 0.3rem .5rem rgba(0, 0, 0, 0.137);
+}
+
+
+canvas {
+  background-color: rgb(190, 193, 204);
+    image-rendering: pixelated;
+    width: 100%; /* Each canvas occupies 1/7th of the container's width */
+    height: 96%; /* Set a fixed height for the canvas */
+    border-radius: 10px;
+
+    /*border: 1px solid #000;*/
+}

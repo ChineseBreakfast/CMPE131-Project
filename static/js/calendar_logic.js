@@ -2,8 +2,6 @@
 
 const date = new Date();
 
-list = meeting_list[1];
-
 const renderCalendar = () => {
     
     date.setDate(1);
@@ -75,11 +73,14 @@ document.querySelector('.days ').addEventListener('click', function(e) {
         date.setMonth(date.getMonth()+1);
     }  
 
+    if (name != "days"){
     click_day = new Date();
     click_day.setFullYear(date.getFullYear());
     click_day.setMonth(date.getMonth());
     click_day.setDate(parseInt(text)); 
-    a = 1;
+    render_week(click_day);
+    }
+    renderCalendar();
 
 }, false);
 
@@ -96,6 +97,14 @@ document.querySelector('.next').addEventListener('click',() => {
         date.setFullYear(date.getFullYear()+1);
     renderCalendar();
 });
+
+function get_start_and_end_of_week(input_day)
+{
+    minday = new Date(input_day.getFullYear(),input_day.getMonth(),input_day.getDate()-input_day.getDay());
+    // Get the end of the week
+    maxday = new Date(input_day.getFullYear(),input_day.getMonth(),input_day.getDate()-input_day.getDay()+7);
+    return(minday,maxday);
+};
 
 function return_weeks_meetings(input_day){
     const returnarray = [];
@@ -114,7 +123,7 @@ function return_weeks_meetings(input_day){
         }
     }
     return returnarray;
-}
+};
 
 renderCalendar();
 const today = new Date();
