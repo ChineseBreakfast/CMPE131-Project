@@ -74,16 +74,13 @@ document.querySelector('.days ').addEventListener('click', function(e) {
     if (target.className == "next-date"){
         date.setMonth(date.getMonth()+1);
     }  
-    year = date.getFullYear();
-    month = date.getMonth();
-    day = parseInt(text);
-    $.ajax({ 
-        url: '/input_meeting', 
-        type: 'GET', 
-        data: {'response' : year,month,day},
-        success: function(response){ 
-        $('#main').text(response)} 
-        })
+
+    click_day = new Date();
+    click_day.setFullYear(date.getFullYear());
+    click_day.setMonth(date.getMonth());
+    click_day.setDate(parseInt(text)); 
+    a = 1;
+
 }, false);
 
 
