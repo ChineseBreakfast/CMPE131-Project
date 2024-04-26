@@ -65,15 +65,17 @@ document.querySelector('.days ').addEventListener('click', function(e) {
     e = e || window.event;
     var target = e.target || e.srcElement,
     text = target.textContent || target.innerText; 
-    name = target.class_name;
+    name = target.className;
     if (target.className == "prev-date"){
         date.setMonth(date.getMonth()-1);
-        renderCalendar();
     }
     if (target.className == "next-date"){
         date.setMonth(date.getMonth()+1);
-        renderCalendar();
     }  
+    year = date.getFullYear();
+    month = date.getMonth();
+    day = parseInt(text);
+    let a = 1;
 }, false);
 
 
