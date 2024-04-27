@@ -439,4 +439,22 @@ canvas {
 
     /*border: 1px solid #000;*/
 }
+canvas :hover{
+  background-color: rgb(190, 193, 204);
+    /*image-rendering: pixelated;*/
+    width: 100%; /* Each canvas occupies 1/7th of the container's width */
+    height: 94%; /* Set a fixed height for the canvas */
+    border-radius: 10px;
+    transition-duration: 0.2s;
+    border: .2rem solid rgb(68, 158, 123);
+
+    /*border: 1px solid #000;*/
+}
+
+.a:hover {
+  color: rgb(0, 0, 0);
+  transition-duration: 0.2s;
+  border: .2rem solid rgb(0, 0, 0);;
+  cursor: pointer;
+}
 

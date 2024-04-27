@@ -1,205 +1,56 @@
-            //var MeetingsM = parceMeetingTimes(1, meetings);
-            //var MeetingsT = parceMeetingTimes(2, /*python function here*/);
-            //var MeetingsW = parceMeetingTimes(3, /*python function here*/);
-            //var MeetingsTh = parceMeetingTimes(4, /*python function here*/);
-            //var MeetingsF = parceMeetingTimes(5, /*python function here*/);
-            //var MeetingsSa = parceMeetingTimes(6, /*python function here*/);
-            //var MeetingsSu = parceMeetingTimes(0, /*python function here*/);
-            //console.log("Meetings: ", MeetingsM);
+            
+    dayarray = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
     function render_week(render_day){
-        const show_week = document.querySelector(".container1");
-        minday = new Date(render_day.getFullYear(),render_day.getMonth(),render_day.getDate()-render_day.getDay());
-        week_days = `<div class="column"><h2>Sunday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Sunday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
-        minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Monday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Monday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
-        minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Tuesday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Tuesday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
-        minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Wednesday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Wednesday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
-        minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Thursday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Thursday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
-        minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Friday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Friday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
-        minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Saturday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Saturday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
-        show_week.innerHTML = week_days;
 
+        // Get the list of meetings for the render_day
         meetings = return_weeks_meetings(render_day);
-        
-        var MeetingsM = parceMeetingTimes(1, meetings);
-        var MeetingsT = parceMeetingTimes(2, meetings);
-        var MeetingsW = parceMeetingTimes(3, meetings);
-        var MeetingsTh = parceMeetingTimes(4, meetings);
-        var MeetingsF = parceMeetingTimes(5, meetings);
-        var MeetingsSa = parceMeetingTimes(6, meetings);
-        var MeetingsSu = parceMeetingTimes(0, meetings);
+        // select the container for html injection
+        const show_week = document.querySelector(".container1");
 
-        console.log("Meetings: ", meetings);
-        console.log("Meetings: ", MeetingsM);
+        // Find monday of the week that render_day is in 
+        minday = new Date(render_day.getFullYear(),render_day.getMonth(),render_day.getDate()-render_day.getDay());
 
-            const cM = document.getElementById("Monday");
-            const ctxM = cM.getContext("2d");
-            //ctxM.setAttribute('height', '300');
-            //ctxM.width = window.innerWidth * 0.1419; // 80% of window width
-            //ctxM.height = window.innerHeight * 0.5; // 80% of window height
-            ctxM.globalAlpha = 0.8;
-            ctxM.lineWidth = 1;
+        week_days = [];
+        day_index = 0; // keep track of which day of the week we are on 
+        for (i in dayarray){
+            tempa = [];
+                count = 0;
+                offset = 10; // offset for each visual meeting 
 
-            ctxM.strokeStyle = 'grey';
-
-            ctxM.beginPath();
-            for (var y = 0; y < 1200; y += 50) {
-                addLineSubPath(ctxM, y);
-            }
-            ctxM.stroke();
-            offset = 10;
-            for (let m of MeetingsM) {
-                ctxM.fillStyle = "red";
-                ctxM.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offsetCal(offset, 20, 10, 140);
-            }
-
+                // Itterate through all of the meetings in that day, then create a string of html items that wie will append to the container 
+                for (let m of parceMeetingTimes(day_index, meetings)) {
+                    tempa += `<div class = a
+                    style = "
+                    position:absolute; 
+                    background-color: rgb(68, 158, 123);
+                    width: 20px;
+                    height: ${parceSize(m.start, m.end)}px;
+                    margin-left: ${offset}px; 
+                    margin-top: ${barPosition(m.start)}px;
+                    border-radius: 5px;">
+                    </div>`;
+                    count++;
+                    offset = offsetCal(offset, 20, 10, 140);
+                }
             
-            
-            const cT = document.getElementById("Tuesday");
-            const ctxT = cT.getContext("2d");
-            //ctxT.width = window.innerWidth * 0.1419; // 80% of window width
-            //ctxT.height = window.innerHeight * 0.5; // 80% of window height
-            ctxT.globalAlpha = 0.8;
-            ctxT.lineWidth = 1;
-
-            ctxT.strokeStyle = 'grey';
-
-            ctxT.beginPath();
-            for (var y = 0; y < 1200; y += 50) {
-                addLineSubPath(ctxT, y);
-            }
-            ctxT.stroke();
-            offset = 10;
-            for (let m of MeetingsT) {
-                ctxT.fillStyle = "red";
-                ctxT.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offsetCal(offset, 20, 10, 140);
-            }
-
-
-
-            const cW = document.getElementById("Wednesday");
-            const ctxW = cW.getContext("2d");
-            //ctxW.width = window.innerWidth * 0.1419; // 80% of window width
-            //ctxW.height = window.innerHeight * 0.50; // 80% of window height
-            ctxW.globalAlpha = 0.8;
-            ctxW.lineWidth = 1;
-
-            ctxW.strokeStyle = 'grey';
-
-            ctxW.beginPath();
-            for (var y = 0; y < 1200; y += 50) {
-                addLineSubPath(ctxW, y);
-            }
-            ctxW.stroke();
-            offset = 10;
-            for (let m of MeetingsW) {
-                ctxW.fillStyle = "red";
-                ctxW.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offsetCal(offset, 20, 10, 140);
-            }
-
-
-
-            const cTh = document.getElementById("Thursday");
-            const ctxTh = cTh.getContext("2d");
-            //ctxTh.width = window.innerWidth * 0.1419; // 80% of window width
-            //ctxTh.height = window.innerHeight * 0.50; // 80% of window height
-            ctxTh.globalAlpha = 0.8;
-            ctxTh.lineWidth = 1;
-
-            ctxTh.strokeStyle = 'grey';
-
-            ctxTh.beginPath();
-            for (var y = 0; y < 1200; y += 50) {
-                addLineSubPath(ctxTh, y);
-            }
-            ctxTh.stroke();
-            offset = 10;
-            for (let m of MeetingsTh) {
-                ctxTh.fillStyle = "red";
-                ctxTh.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offsetCal(offset, 20, 10, 140);
-            }
-
-
-
-            const cF = document.getElementById("Friday");
-            const ctxF = cF.getContext("2d");
-            //ctxF.width = window.innerWidth * 0.1419; // 80% of window width
-            //ctxF.height = window.innerHeight * 0.50; // 80% of window height
-            ctxF.globalAlpha = 0.8;
-            ctxF.lineWidth = 1;
-
-            ctxF.strokeStyle = 'grey';
-
-            ctxF.beginPath();
-            for (var y = 0; y < 1200; y += 50) {
-                addLineSubPath(ctxF, y);
-            }
-            ctxF.stroke();
-            offset = 10;
-            for (let m of MeetingsF) {
-                ctxF.fillStyle = "red";
-                ctxF.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offsetCal(offset, 20, 10, 140);
-            }
-
-
-
-            const cSa = document.getElementById("Saturday");
-            const ctxSa = cSa.getContext("2d");
-            //ctxSa.width = window.innerWidth * 0.1419; // 80% of window width
-            //ctxSa.height = window.innerHeight * 0.50; // 80% of window height
-            ctxSa.globalAlpha = 0.8;
-            ctxSa.lineWidth = 1;
-
-            ctxSa.strokeStyle = 'grey';
-
-            ctxSa.beginPath();
-            for (var y = 0; y < 1200; y += 50) {
-                addLineSubPath(ctxSa, y);
-            }
-            ctxSa.stroke();
-            offset = 10;
-            for (let m of MeetingsSa) {
-                ctxSa.fillStyle = "red";
-                ctxSa.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offsetCal(offset, 20, 10, 140);
-            }
-
-
-
-            const cSu = document.getElementById("Sunday");
-            const ctxSu = cSu.getContext("2d");
-            //ctxSu.width = window.innerWidth * 0.1419; // 80% of window width
-            //ctxSu.height = window.innerHeight * 0.50; // 80% of window height
-            ctxSu.globalAlpha = 0.8;
-            ctxSu.lineWidth = 1;
-
-            ctxSu.strokeStyle = 'grey';
-
-            ctxSu.beginPath();
-            for (var y = 0; y < 1200; y += 50) {
-                addLineSubPath(ctxSu, y);
-            }
-            ctxSu.stroke();
-            offset = 10;
-            for (let m of MeetingsSu) {
-                ctxSu.fillStyle = "red";
-                ctxSu.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offsetCal(offset, 20, 10, 140);
-            }
+            // Create an HTML item that will represent a column for each day, we will append the tempa array inside of 
+            // the  HTML code for the column so that each column will get HTML items for all of the meetings 
+            week_days += `<div class="column">
+            <h2>${dayarray[i]}</h2>
+            <p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1>
+            <div class="${dayarray[i]}">${tempa}</div>
+            <style>.${dayarray[i]} {
+            background-color: rgb(190, 193, 204);
+            width: 150px; /* Each canvas occupies 1/7th of the container's width */
+            height: 94%;
+            border-radius: 10px;}
+            </style></div>`
+            minday.setDate(minday.getDate()+1);
+            day_index++;
         }
-            //window.addEventListener('resize', domloaded);
-
+        show_week.innerHTML = week_days;
+        }
     function addLineSubPath(ctx, y) {
         ctx.moveTo(0, y);
         ctx.lineTo(200, y);
