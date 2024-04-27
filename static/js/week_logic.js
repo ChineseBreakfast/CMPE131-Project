@@ -44,10 +44,11 @@
             //ctxM.height = window.innerHeight * 0.5; // 80% of window height
             
             offset = 10;
+            direction = 0;
             for (let m of MeetingsM) {
                 ctxM.fillStyle = "red";
                 ctxM.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offset + 25;
+                offset = offsetCal(offset, 20, 10, 140);
             }
 
             
@@ -61,7 +62,7 @@
             for (let m of MeetingsT) {
                 ctxT.fillStyle = "red";
                 ctxT.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offset + 25;
+                offset = offsetCal(offset, 20, 10, 140);
             }
 
 
@@ -75,7 +76,7 @@
             for (let m of MeetingsW) {
                 ctxW.fillStyle = "red";
                 ctxW.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offset + 25;
+                offset = offsetCal(offset, 20, 10, 140);
             }
 
 
@@ -89,7 +90,7 @@
             for (let m of MeetingsTh) {
                 ctxTh.fillStyle = "red";
                 ctxTh.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offset + 25;
+                offset = offsetCal(offset, 20, 10, 140);
             }
 
 
@@ -103,7 +104,7 @@
             for (let m of MeetingsF) {
                 ctxF.fillStyle = "red";
                 ctxF.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offset + 25;
+                offset = offsetCal(offset, 20, 10, 140);
             }
 
 
@@ -117,7 +118,7 @@
             for (let m of MeetingsSa) {
                 ctxSa.fillStyle = "red";
                 ctxSa.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offset + 25;
+                offset = offsetCal(offset, 20, 10, 140);
             }
 
 
@@ -131,10 +132,31 @@
             for (let m of MeetingsSu) {
                 ctxSu.fillStyle = "red";
                 ctxSu.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
-                offset = offset + 25;
+                offset = offsetCal(offset, 20, 10, 140);
             }
         }
             //window.addEventListener('resize', domloaded);
+
+    function offsetCal(offsetcurr, width, startpos, endpos){
+        var offset = offsetcurr;
+        var direction = 0;
+
+        if (offset > endpos) {
+            direction = 1;
+        }
+        else if (offset < startpos) {
+            direction = 0;
+        }
+
+        if(offset <= endpos && direction == 0) {
+            offset = offset + (width + 5);
+        }
+        else if (offset >= startpos && direction == 1) {
+            offset = offset - (width + 5);
+        }
+        return offset;
+    }
+
     function barPosition(dateTimeStart) {
         var date1 = new Date(dateTimeStart); 
         var date2 = new Date(dateTimeStart);
