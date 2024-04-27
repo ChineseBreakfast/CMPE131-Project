@@ -16,7 +16,7 @@
         for (i in dayarray){
             tempa = [];
                 count = 0;
-                offset = 10; // offset for each visual meeting 
+                offset = 5; // offset for each visual meeting 
 
                 // Itterate through all of the meetings in that day, then create a string of html items that wie will append to the container 
                 for (let m of parceMeetingTimes(day_index, meetings)) {
@@ -40,7 +40,7 @@
                     <p2>${m.Description}</p2>
                     </div>`;
                     count++;
-                    offset = offsetCal(offset, 20, 10, 130);
+                    offset = offsetCal(offset, 20, 5, 130);
                 }
             
             // Create an HTML item that will represent a column for each day, we will append the tempa array inside of 
@@ -93,7 +93,7 @@
         date2.setSeconds(0);
         var differenceMs = date1.getTime() - date2.getTime();
         var hours = differenceMs / (1000 * 60 * 60);
-        var pos = 1200 * (hours/24);
+        var pos = 929 * (hours/24);
         return pos;
     }
 
@@ -110,7 +110,7 @@
         var hours = differenceMs / (1000 * 60 * 60);
 
         // Convert hours into an integer as a size of the bar on the canvas
-        var size = 1200 * (hours/24);
+        var size = 928 * (hours/24);
 
         // Return the difference as an object
         return size;
