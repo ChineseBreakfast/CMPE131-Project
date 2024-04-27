@@ -29,6 +29,15 @@
                     margin-left: ${offset}px; 
                     margin-top: ${barPosition(m.start)}px;
                     border-radius: 5px;">
+                    </div>
+                    <div class = "meeting_info" style ="
+                    margin-left: ${offset}px; 
+                     margin-top: ${barPosition(m.start)}px;">
+                    ${m.Room_number} 
+                    <h4>${m.start}</h4>
+                    <h4>${m.end}</h4>
+                    <p2>${m.attendies}</p2>
+                    <p2>${m.Description}</p2>
                     </div>`;
                     count++;
                     offset = offsetCal(offset, 20, 10, 140);

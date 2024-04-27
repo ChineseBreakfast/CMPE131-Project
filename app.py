@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
 debug = 1
-NUMBER_OF_MEETINGS = 10
+NUMBER_OF_MEETINGS = 100
 
 
 
