@@ -40,7 +40,7 @@
                     <p2>${m.Description}</p2>
                     </div>`;
                     count++;
-                    offset = offsetCal(offset, 20, 10, 140);
+                    offset = offsetCal(offset, 20, 10, 130);
                 }
             
             // Create an HTML item that will represent a column for each day, we will append the tempa array inside of 
