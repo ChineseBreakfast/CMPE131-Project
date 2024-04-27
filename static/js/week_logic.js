@@ -10,19 +10,19 @@
     function render_week(render_day){
         const show_week = document.querySelector(".container1");
         minday = new Date(render_day.getFullYear(),render_day.getMonth(),render_day.getDate()-render_day.getDay());
-        week_days = `<div class="column"><h2>Sunday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Sunday" style="border:1px solid grey"></canvas></div>`
+        week_days = `<div class="column"><h2>Sunday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Sunday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Monday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Monday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Monday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Monday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Tuesday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Tuesday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Tuesday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Tuesday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Wednesday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Wednesday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Wednesday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Wednesday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Thursday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Thursday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Thursday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Thursday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Friday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Friday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Friday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Friday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Saturday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Saturday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Saturday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Saturday" style="border:1px solid grey" height="1200" width="150"></canvas></div>`
         show_week.innerHTML = week_days;
 
         meetings = return_weeks_meetings(render_day);
@@ -40,11 +40,20 @@
 
             const cM = document.getElementById("Monday");
             const ctxM = cM.getContext("2d");
+            //ctxM.setAttribute('height', '300');
             //ctxM.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxM.height = window.innerHeight * 0.5; // 80% of window height
-            
+            ctxM.globalAlpha = 0.8;
+            ctxM.lineWidth = 1;
+
+            ctxM.strokeStyle = 'grey';
+
+            ctxM.beginPath();
+            for (var y = 0; y < 1200; y += 50) {
+                addLineSubPath(ctxM, y);
+            }
+            ctxM.stroke();
             offset = 10;
-            direction = 0;
             for (let m of MeetingsM) {
                 ctxM.fillStyle = "red";
                 ctxM.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
@@ -57,7 +66,16 @@
             const ctxT = cT.getContext("2d");
             //ctxT.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxT.height = window.innerHeight * 0.5; // 80% of window height
-            
+            ctxT.globalAlpha = 0.8;
+            ctxT.lineWidth = 1;
+
+            ctxT.strokeStyle = 'grey';
+
+            ctxT.beginPath();
+            for (var y = 0; y < 1200; y += 50) {
+                addLineSubPath(ctxT, y);
+            }
+            ctxT.stroke();
             offset = 10;
             for (let m of MeetingsT) {
                 ctxT.fillStyle = "red";
@@ -71,7 +89,16 @@
             const ctxW = cW.getContext("2d");
             //ctxW.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxW.height = window.innerHeight * 0.50; // 80% of window height
-            
+            ctxW.globalAlpha = 0.8;
+            ctxW.lineWidth = 1;
+
+            ctxW.strokeStyle = 'grey';
+
+            ctxW.beginPath();
+            for (var y = 0; y < 1200; y += 50) {
+                addLineSubPath(ctxW, y);
+            }
+            ctxW.stroke();
             offset = 10;
             for (let m of MeetingsW) {
                 ctxW.fillStyle = "red";
@@ -85,7 +112,16 @@
             const ctxTh = cTh.getContext("2d");
             //ctxTh.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxTh.height = window.innerHeight * 0.50; // 80% of window height
-            
+            ctxTh.globalAlpha = 0.8;
+            ctxTh.lineWidth = 1;
+
+            ctxTh.strokeStyle = 'grey';
+
+            ctxTh.beginPath();
+            for (var y = 0; y < 1200; y += 50) {
+                addLineSubPath(ctxTh, y);
+            }
+            ctxTh.stroke();
             offset = 10;
             for (let m of MeetingsTh) {
                 ctxTh.fillStyle = "red";
@@ -99,7 +135,16 @@
             const ctxF = cF.getContext("2d");
             //ctxF.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxF.height = window.innerHeight * 0.50; // 80% of window height
-            
+            ctxF.globalAlpha = 0.8;
+            ctxF.lineWidth = 1;
+
+            ctxF.strokeStyle = 'grey';
+
+            ctxF.beginPath();
+            for (var y = 0; y < 1200; y += 50) {
+                addLineSubPath(ctxF, y);
+            }
+            ctxF.stroke();
             offset = 10;
             for (let m of MeetingsF) {
                 ctxF.fillStyle = "red";
@@ -113,7 +158,16 @@
             const ctxSa = cSa.getContext("2d");
             //ctxSa.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxSa.height = window.innerHeight * 0.50; // 80% of window height
-            
+            ctxSa.globalAlpha = 0.8;
+            ctxSa.lineWidth = 1;
+
+            ctxSa.strokeStyle = 'grey';
+
+            ctxSa.beginPath();
+            for (var y = 0; y < 1200; y += 50) {
+                addLineSubPath(ctxSa, y);
+            }
+            ctxSa.stroke();
             offset = 10;
             for (let m of MeetingsSa) {
                 ctxSa.fillStyle = "red";
@@ -127,7 +181,16 @@
             const ctxSu = cSu.getContext("2d");
             //ctxSu.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxSu.height = window.innerHeight * 0.50; // 80% of window height
-            
+            ctxSu.globalAlpha = 0.8;
+            ctxSu.lineWidth = 1;
+
+            ctxSu.strokeStyle = 'grey';
+
+            ctxSu.beginPath();
+            for (var y = 0; y < 1200; y += 50) {
+                addLineSubPath(ctxSu, y);
+            }
+            ctxSu.stroke();
             offset = 10;
             for (let m of MeetingsSu) {
                 ctxSu.fillStyle = "red";
@@ -136,6 +199,11 @@
             }
         }
             //window.addEventListener('resize', domloaded);
+
+    function addLineSubPath(ctx, y) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(200, y);
+    }
 
     function offsetCal(offsetcurr, width, startpos, endpos){
         var offset = offsetcurr;
@@ -165,7 +233,7 @@
         date2.setSeconds(0);
         var differenceMs = date1.getTime() - date2.getTime();
         var hours = differenceMs / (1000 * 60 * 60);
-        var pos = 150 * (hours/24);
+        var pos = 1200 * (hours/24);
         return pos;
     }
 
@@ -182,7 +250,7 @@
         var hours = differenceMs / (1000 * 60 * 60);
 
         // Convert hours into an integer as a size of the bar on the canvas
-        var size = 150 * (hours/24);
+        var size = 1200 * (hours/24);
 
         // Return the difference as an object
         return size;

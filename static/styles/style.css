@@ -432,10 +432,11 @@ button[type=submit]:hover{
 
 canvas {
   background-color: rgb(190, 193, 204);
-    image-rendering: pixelated;
+    /*image-rendering: pixelated;*/
     width: 100%; /* Each canvas occupies 1/7th of the container's width */
     height: 94%; /* Set a fixed height for the canvas */
     border-radius: 10px;
 
     /*border: 1px solid #000;*/
 }
+
