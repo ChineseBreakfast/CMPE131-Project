@@ -1,4 +1,4 @@
-            //var MeetingsM = parceMeetingTimes(1, /*python function here*/);
+            //var MeetingsM = parceMeetingTimes(1, meetings);
             //var MeetingsT = parceMeetingTimes(2, /*python function here*/);
             //var MeetingsW = parceMeetingTimes(3, /*python function here*/);
             //var MeetingsTh = parceMeetingTimes(4, /*python function here*/);
@@ -10,34 +10,43 @@
     function render_week(render_day){
         const show_week = document.querySelector(".container1");
         minday = new Date(render_day.getFullYear(),render_day.getMonth(),render_day.getDate()-render_day.getDay());
-        week_days = `<div class="column"><h2>Sunday</h2><p1>${minday.getDate() + "/" + (minday.getMonth()+1)}</p1><canvas id="Sunday" style="border:1px solid grey"></canvas></div>`
+        week_days = `<div class="column"><h2>Sunday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Sunday" style="border:1px solid grey"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Monday</h2><p1>${minday.getDate() + "/" + (minday.getMonth()+1)}</p1><canvas id="Monday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Monday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Monday" style="border:1px solid grey"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Tuesday</h2><p1>${minday.getDate() + "/" + (minday.getMonth()+1)}</p1><canvas id="Tuesday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Tuesday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Tuesday" style="border:1px solid grey"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Wednesday</h2><p1>${minday.getDate() + "/" + (minday.getMonth()+1)}</p1><canvas id="Wednesday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Wednesday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Wednesday" style="border:1px solid grey"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Thursday</h2><p1>${minday.getDate() + "/" + (minday.getMonth()+1)}</p1><canvas id="Thursday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Thursday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Thursday" style="border:1px solid grey"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Friday</h2><p1>${minday.getDate() + "/" + (minday.getMonth()+1)}</p1><canvas id="Friday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Friday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Friday" style="border:1px solid grey"></canvas></div>`
         minday.setDate(minday.getDate()+1);
-        week_days += `<div class="column"><h2>Saturday</h2><p1>${minday.getDate() + "/" + (minday.getMonth()+1)}</p1><canvas id="Saturday" style="border:1px solid grey"></canvas></div>`
+        week_days += `<div class="column"><h2>Saturday</h2><p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1><canvas id="Saturday" style="border:1px solid grey"></canvas></div>`
         show_week.innerHTML = week_days;
 
         meetings = return_weeks_meetings(render_day);
+        
+        var MeetingsM = parceMeetingTimes(1, meetings);
+        var MeetingsT = parceMeetingTimes(2, meetings);
+        var MeetingsW = parceMeetingTimes(3, meetings);
+        var MeetingsTh = parceMeetingTimes(4, meetings);
+        var MeetingsF = parceMeetingTimes(5, meetings);
+        var MeetingsSa = parceMeetingTimes(6, meetings);
+        var MeetingsSu = parceMeetingTimes(0, meetings);
 
-
+        console.log("Meetings: ", meetings);
+        console.log("Meetings: ", MeetingsM);
 
             const cM = document.getElementById("Monday");
             const ctxM = cM.getContext("2d");
-            ctxM.width = window.innerWidth * 0.1419; // 80% of window width
-            ctxM.height = window.innerHeight * 0.5; // 80% of window height
-            x = 150;
+            //ctxM.width = window.innerWidth * 0.1419; // 80% of window width
+            //ctxM.height = window.innerHeight * 0.5; // 80% of window height
+            
             offset = 10;
-            for (let i = 0; i < 3; i++) {
+            for (let m of MeetingsM) {
                 ctxM.fillStyle = "red";
-                ctxM.fillRect(offset, 0, 20, x);
+                ctxM.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
                 offset = offset + 25;
             }
 
@@ -47,12 +56,12 @@
             const ctxT = cT.getContext("2d");
             //ctxT.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxT.height = window.innerHeight * 0.5; // 80% of window height
-            x = 200;
-            offset = 0;
-            for (let i = 0; i < 3; i++) {
+            
+            offset = 10;
+            for (let m of MeetingsT) {
                 ctxT.fillStyle = "red";
-                ctxT.fillRect(20, offset, x, 5);
-                offset = offset + 6;
+                ctxT.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
+                offset = offset + 25;
             }
 
 
@@ -61,12 +70,12 @@
             const ctxW = cW.getContext("2d");
             //ctxW.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxW.height = window.innerHeight * 0.50; // 80% of window height
-            x = 200;
-            offset = 0;
-            for (let i = 0; i < 3; i++) {
+            
+            offset = 10;
+            for (let m of MeetingsW) {
                 ctxW.fillStyle = "red";
-                ctxW.fillRect(20, offset, x, 5);
-                offset = offset + 6;
+                ctxW.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
+                offset = offset + 25;
             }
 
 
@@ -75,12 +84,12 @@
             const ctxTh = cTh.getContext("2d");
             //ctxTh.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxTh.height = window.innerHeight * 0.50; // 80% of window height
-            x = 200;
-            offset = 0;
-            for (let i = 0; i < 3; i++) {
+            
+            offset = 10;
+            for (let m of MeetingsTh) {
                 ctxTh.fillStyle = "red";
-                ctxTh.fillRect(20, offset, x, 5);
-                offset = offset + 6;
+                ctxTh.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
+                offset = offset + 25;
             }
 
 
@@ -89,12 +98,12 @@
             const ctxF = cF.getContext("2d");
             //ctxF.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxF.height = window.innerHeight * 0.50; // 80% of window height
-            x = 200;
-            offset = 0;
-            for (let i = 0; i < 3; i++) {
+            
+            offset = 10;
+            for (let m of MeetingsF) {
                 ctxF.fillStyle = "red";
-                ctxF.fillRect(20, offset, x, 5);
-                offset = offset + 6;
+                ctxF.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
+                offset = offset + 25;
             }
 
 
@@ -103,12 +112,12 @@
             const ctxSa = cSa.getContext("2d");
             //ctxSa.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxSa.height = window.innerHeight * 0.50; // 80% of window height
-            x = 200;
-            offset = 0;
-            for (let i = 0; i < 3; i++) {
+            
+            offset = 10;
+            for (let m of MeetingsSa) {
                 ctxSa.fillStyle = "red";
-                ctxSa.fillRect(20, offset, x, 5);
-                offset = offset + 6;
+                ctxSa.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
+                offset = offset + 25;
             }
 
 
@@ -117,18 +126,21 @@
             const ctxSu = cSu.getContext("2d");
             //ctxSu.width = window.innerWidth * 0.1419; // 80% of window width
             //ctxSu.height = window.innerHeight * 0.50; // 80% of window height
-            x = 200;
-            offset = 0;
-            for (let i = 0; i < 3; i++) {
+            
+            offset = 10;
+            for (let m of MeetingsSu) {
                 ctxSu.fillStyle = "red";
-                ctxSu.fillRect(20, offset, x, 5);
-                offset = offset + 6;
+                ctxSu.fillRect(offset, barPosition(m.start), 20, parceSize(m.start, m.end));
+                offset = offset + 25;
             }
         }
             //window.addEventListener('resize', domloaded);
     function barPosition(dateTimeStart) {
-        var date1 = new Date('2024-01-01T' + dateTimeStart + 'Z'); 
-        var date2 = new Date('2024-01-01T' + `00:00:00` + 'Z');
+        var date1 = new Date(dateTimeStart); 
+        var date2 = new Date(dateTimeStart);
+        date2.setHours(0);
+        date2.setMinutes(0);
+        date2.setSeconds(0);
         var differenceMs = date1.getTime() - date2.getTime();
         var hours = differenceMs / (1000 * 60 * 60);
         var pos = 150 * (hours/24);
@@ -138,8 +150,8 @@
     function parceSize(dateTimeStart, dateTimeEnd){
         /*Range Date*/
         // Parse the time strings into Date objects
-        var date1 = new Date('2024-01-01T' + dateTimeStart + 'Z'); 
-        var date2 = new Date('2024-01-01T' + dateTimeEnd + 'Z');
+        var date1 = new Date(dateTimeStart); 
+        var date2 = new Date(dateTimeEnd);
 
         // Calculate the difference in milliseconds
         var differenceMs = date2.getTime() - date1.getTime();
@@ -181,7 +193,8 @@
     function parceMeetingTimes(day, Meetings) {
         var MeetingsDay = [];
         for (let m of Meetings) {
-            if(m.getDay == day) {
+            var d = new Date(m.start);
+            if(d.getDay() == day) {
                 MeetingsDay.push(m);
             }
           }
