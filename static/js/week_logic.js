@@ -5,6 +5,28 @@
 
         // Get the list of meetings for the render_day
         meetings = return_weeks_meetings(render_day);
+        console.log("Meetings: ", meetings);
+        sortStack(meetings);
+        var MeetingsM = parceMeetingTimes(1, meetings);
+        var MeetingsT = parceMeetingTimes(2, meetings);
+        var MeetingsW = parceMeetingTimes(3, meetings);
+        //var sortedWed = sortStack(MeetingsW);
+        var MeetingsTh = parceMeetingTimes(4, meetings);
+        var MeetingsF = parceMeetingTimes(5, meetings);
+        var MeetingsSa = parceMeetingTimes(6, meetings);
+        var MeetingsSu = parceMeetingTimes(0, meetings);
+
+        console.log("Meetings: ", meetings);
+        //console.log("Meetings: ", sortStack(meetings));
+        console.log("MeetingsM: ", MeetingsM);
+        console.log("MeetingsT: ", MeetingsT);
+        console.log("MeetingsW: ", MeetingsW);
+        //console.log("SortedMeetingsW: ", sortedWed);
+        console.log("MeetingsTh: ", MeetingsTh);
+        console.log("MeetingsF: ", MeetingsF);
+        console.log("MeetingsSa: ", MeetingsSa);
+        console.log("MeetingsSu: ", MeetingsSu);
+
         // select the container for html injection
         const show_week = document.querySelector(".container1");
 
@@ -16,8 +38,8 @@
         for (i in dayarray){
             tempa = [];
                 count = 0;
-                offset = 5; // offset for each visual meeting 
-
+                offset = 15; // offset for each visual meeting 
+                
                 // Itterate through all of the meetings in that day, then create a string of html items that wie will append to the container 
                 for (let m of parceMeetingTimes(day_index, meetings)) {
                     tempa += `<div class = a
@@ -39,8 +61,10 @@
                     <p2>${m.attendies}</p2>
                     <p2>${m.Description}</p2>
                     </div>`;
+                    offset = offsetCal(offset, 20, 15, 130, count);
+                    console.log("MeetingID:" + offset);
                     count++;
-                    offset = offsetCal(offset, 20, 5, 130);
+                    
                 }
             
             // Create an HTML item that will represent a column for each day, we will append the tempa array inside of 
@@ -67,9 +91,10 @@
 
     function offsetCal(offsetcurr, width, startpos, endpos){
         var offset = offsetcurr;
+        
         var direction = 0;
 
-        if (offset > endpos) {
+        /*if (offset > endpos) {
             direction = 1;
         }
         else if (offset < startpos) {
@@ -81,7 +106,14 @@
         }
         else if (offset >= startpos && direction == 1) {
             offset = offset - (width + 5);
+        }*/
+        if (count <= 3) {
+            offset = offset + (width + 5);
         }
+        else {
+            offset = offset - (width + 5);
+        }
+        
         return offset;
     }
 
@@ -142,13 +174,22 @@
 
     function parceMeetingTimes(day, Meetings) {
         var MeetingsDay = [];
+        //var sorted = [];
         for (let m of Meetings) {
             var d = new Date(m.start);
             if(d.getDay() == day) {
                 MeetingsDay.push(m);
             }
           }
+          //sorted = sortStack(MeetingsDay);
+          //MeetingsDay = sorted;
+
         return MeetingsDay;
+    }
+
+    function sortStack(arr) {
+        // Sort the array using the compare function
+        arr.sort((a, b) => new Date(a.start) - new Date(b.start));
     }
 
     const today1 = new Date();
