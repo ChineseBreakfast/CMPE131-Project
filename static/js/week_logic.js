@@ -33,6 +33,7 @@
         // Find monday of the week that render_day is in 
         minday = new Date(render_day.getFullYear(),render_day.getMonth(),render_day.getDate()-render_day.getDay());
 
+
         week_days = [];
         day_index = 0; // keep track of which day of the week we are on 
         for (i in dayarray){
@@ -42,7 +43,11 @@
                 
                 // Itterate through all of the meetings in that day, then create a string of html items that wie will append to the container 
                 for (let m of parceMeetingTimes(day_index, meetings)) {
-                    tempa += `<div class = a
+                    attendie_string = [];
+                    for (let attendie_it of m.attendies){
+                        attendie_string += attendie_it + " ";
+                    }
+                    tempa += `<div class = "a" id = "a"
                     style = "
                     position:absolute; 
                     background-color: rgb(68, 158, 123);
@@ -50,15 +55,19 @@
                     height: ${parceSize(m.start, m.end)}px;
                     margin-left: ${offset}px; 
                     margin-top: ${barPosition(m.start)}px;
-                    border-radius: 5px;">
+                    border-radius: 5px;"
+                    onclick = "myFuntion()">
                     </div>
                     <div class = "meeting_info" style ="
                     margin-left: ${offset}px; 
-                     margin-top: ${barPosition(m.start)}px;">
-                    ${m.Room_number} 
-                    <h4>${m.start}</h4>
-                    <h4>${m.end}</h4>
-                    <p2>${m.attendies}</p2>
+                    margin-top: ${barPosition(m.start)-(parceSize(m.start,m.end))}px;">
+                    <h3>${m.Room_number}</h3>
+                    <p8>----------------------</p8><br>
+                    <p4>${m.start}</p4><br>
+                    <p4>${m.end}</p4><br>
+                    <p8>----------------------</p8><br>
+                    <p2>${attendie_string }</p2> <br>
+                    <p8>----------------------</p8><br>
                     <p2>${m.Description}</p2>
                     </div>`;
                     offset = offsetCal(offset, 20, 15, 130, count);
@@ -74,7 +83,7 @@
             <p1>${(minday.getMonth()+1) + "/" + minday.getDate()}</p1>
             <div class="${dayarray[i]}">${tempa}</div>
             <style>.${dayarray[i]} {
-            background-color: rgb(190, 193, 204);
+            background-color: rgba(190, 193, 204,0.5);
             width: 150px; /* Each canvas occupies 1/7th of the container's width */
             height: 94%;
             border-radius: 10px;}
@@ -125,7 +134,7 @@
         date2.setSeconds(0);
         var differenceMs = date1.getTime() - date2.getTime();
         var hours = differenceMs / (1000 * 60 * 60);
-        var pos = 929 * (hours/24);
+        var pos = 926 * (hours/24);
         return pos;
     }
 

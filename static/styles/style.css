@@ -375,9 +375,11 @@ button[type=submit]:hover{
   padding: 16px 20px;
   border: none;
   cursor: pointer;
-  width: 100%;
+  width: 100px;
   margin-bottom:10px;
   opacity: 0.8;
+  align-self:center;
+
 }
 
 /* Add a red background color to the cancel button */
@@ -392,6 +394,7 @@ button[type=submit]:hover{
 
 .container1 {
     display: flex;
+
     /*overflow-x: auto; /* Allow horizontal scrolling if needed */
     padding: 1px;
     height: 100%;
@@ -402,31 +405,35 @@ button[type=submit]:hover{
     float:right;
     top: -40%;
     right: 0.5%;
-    background-color: rgba(190, 193, 204, 0.774);
     border-radius: 10px;
+    background-image: url("Group_12x.png");
+    background-repeat: no-repeat;
+    background-size:contain;
+    background-position-y: center;
+    background-blend-mode: color;
    /* box-shadow: 0 0.6rem 3rem rgba(0,0,0,0.4); */ 
 }
 .column {
   position: inherit;
+  
     text-align: center;
-    background-color: rgb(68, 158, 123);
     transition: background-color 0.2s;
     border-radius: 10px;
     border: .1rem solid rgb(68, 158, 123);
 }
 
 .column:hover{
-  background-color: rgb(68, 158, 123);
+  background-color: rgba(68, 158, 123,0.25);
   border: .2rem solid rgb(68, 158, 123);
   
 }
 .column h2{
-   color: rgb(255, 255, 255);
+   color: rgb(0, 0, 0);
    text-shadow: 0 0.3rem .5rem rgba(0, 0, 0, 0.137);
    transition-duration: 0.2s;
 }
 .column p1{
-  color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   text-shadow: 0 0.3rem .5rem rgba(0, 0, 0, 0.137);
   transition-duration: 0.2s;
 }
@@ -456,12 +463,13 @@ canvas :hover{
 .a:hover {
   color: rgb(0, 0, 0);
   transition-duration: 0.2s;
-  border: .2rem solid rgb(0, 0, 0);
+  border: .1rem solid rgb(0, 0, 0);
   cursor: pointer;
 }
 
 .meeting_info {
   visibility:hidden;
+  display: block;
   float:inline-start;
   margin-top: -1000%;
 margin-bottom: -1000%;
@@ -471,22 +479,97 @@ margin-left: -1000%;
 }
 .a:hover + .meeting_info{
 z-index:999;
+
 visibility: visible;
 overflow-x: visible;
 float:inline-start;
 background-color: rgb(255, 255, 255);
-border: .2rem solid rgb(0, 0, 0);
+border: .1rem solid rgb(0, 0, 0);
 position: relative;
-width: 200px;
-height: 200px;
-left: 20px;
-border-radius: 5px;
+width: auto;
+max-width: 500px;
+height: auto;
+left: 30px;
+padding: 5%;
+border-radius: 25px;
 align-items: center;
 align-content: center;
-transition-duration: 0.2s;
+transition-duration: 0.5s;
 }
 
 .p2 {
-  word-wrap: break-word;
+  word-wrap:normal;
 
+
+}
+
+.mt-3{
+  text-align: left;
+}
+
+.mt-4{
+  text-shadow: 0 0.3rem .5rem rgba(0, 0, 0, 0.15);
+  margin-top: 10px;
+  text-align: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.tabcontent
+{
+  text-shadow: 0 0.3rem .5rem rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.form-control1{
+
+  padding: 5px;
+  text-align: center;
+  border-radius: 10px;
+  padding-bottom: 4px;
+  font-size: 1.2rem;
+  border: .1rem solid rgb(120, 120, 120);
+  margin-bottom: 5px;
+}
+.form-control2{
+
+  padding: 5px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  padding-bottom: 4px;
+  border: .1rem solid rgb(120, 120, 120);
+  margin-bottom: 5px;
+}
+.form-control3{
+
+  width: 400px;
+  height: 80px;
+  border-radius: 10px;
+  padding-bottom: 4px;
+  border: .1rem solid rgb(120, 120, 120);
+  text-align: left;
+  vertical-align:text-top;
+  margin-bottom: 5px;
+}
+.form-group1
+{
+  text-align: center;
+}
+
+.meeting_room{
+  text-align: center;
+  align-items: center;
+}
+.abc{
+  align-items: center;
+  text-align: center;
+  padding: 4px;
+}
+.Room_select{
+  padding: 5px;
+  border-radius: 10px;
+  text-align: left;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
 }
