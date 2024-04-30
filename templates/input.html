@@ -99,9 +99,12 @@
             else if (result.isDenied) {
                 a = 2;
             }
+            else if (result.isCanceled) {
+                a = 3;
+            }
             $.ajax({ 
-                url: '/input_meeting', 
-                type: 'GET', 
+                url: '/return', 
+                type: 'POST', 
                 data: {'response' : a},
                 success: function(response){ 
                 $('#main').text(response)} 

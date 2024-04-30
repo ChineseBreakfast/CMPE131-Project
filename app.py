@@ -2,18 +2,20 @@ import re
 import json
 import pickle
 import random
+import copy
 from datetime import time, datetime, timedelta, date
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
 debug = 1
-NUMBER_OF_MEETINGS = 100
+NUMBER_OF_MEETINGS = 50
 
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 db = SQLAlchemy(app)
 
 
@@ -61,6 +63,7 @@ def setsave(value):
     save_meeting = value
 
 
+
 @app.route('/main', methods = ["GET","POST"])
 
 @app.route("/")    
@@ -72,17 +75,15 @@ def home():
     meeting_list = return_meeting_times(datetime.now(),datetime.now()+timedelta(days=7))
     meeting_list = json.dumps(meeting_list)
     get_week_meetings(datetime.now()+timedelta(days = 6))
-    if debug:
-            print_all_meetings()
+    #if debug:
+            #print_all_meetings()
     return render_template('index.html',meeting_list =meeting_list)
 
-# route for meeting form submit
-@app.route('/input_meeting', methods = ["GET","POST"])
-def data_submit1():
+# Handles the user input when a meeting error is detected
+@app.route('/return', methods = ["GET","POST"])
+def handle_meeting_error():
     alert = [-1,"0"]
-
-    # "GET" is used if an error is found and the user needs to change their meeting
-    if request.method == "GET":
+    if request.method == "POST":
         answer = request.values.get('response')
         if (answer == '1'):
             db.session.add(global_meeting)
@@ -92,7 +93,12 @@ def data_submit1():
             db.session.commit()
         setsave(meeting())
         setglobal(meeting())
+    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
             
+@app.route('/input_meeting', methods = ["GET","POST"])
+def data_submit1():
+    alert = [-1,"0"]
+
     # When the user posts a meeting
     if request.method == "POST":
 
@@ -127,7 +133,13 @@ def data_submit1():
         # find any time conflicts with the new meeting
         conflict = find_universal_time_conflict(new_meeting)
         if conflict != 0:
-            recommended_meeting = reccomend_new_meeting_times(new_meeting, [0,0,0])
+            recommended_meeting = copy.deepcopy(new_meeting)
+            recommended_meeting = recommend_new_meeting_time(recommended_meeting)
+
+            #recommended_meeting = copy.deepcopy(new_meeting)
+            #recommended_meeting = reccomend_new_meeting_times(recommended_meeting, [0,0,0])
+
+
             
             # we will use global variables to save our meeting objects during the context switch from python to javascript
             setsave(new_meeting)
@@ -240,6 +252,7 @@ if __name__ == '__main__':
 
 def return_all_meetings():
     return json.dumps(return_meeting_times(datetime.min,datetime.max))
+
 def generate_random_meetings(number):
     random_meetings = []
     for meeting_number in range(0,number):
@@ -251,7 +264,7 @@ def generate_random_meetings(number):
         test_group = group("testgroup",employee_list)       
 
         # create a random start time within the week, and the duration of the meeting 
-        start_time_days = random.randrange(1,7,1)
+        start_time_days = random.randrange(1,28,1)
         start_time_hours =  random.randrange(9,17,1)
         meeting_time = random.randrange(30,240,5)
         start_date = datetime(year = datetime.now().year, month=datetime.now().month,  day = datetime.now().day)
@@ -344,54 +357,133 @@ def find_meeting_conflicts(new_meeting):
                             print(str(old_meeting.Start) +" to \n"+ str(old_meeting.End))
     return employee_conflict_list # return the conflict list 
 
+
+def recommend_new_meeting_time(new_meeting):
+
+    while find_universal_time_conflict(new_meeting) != 0:
+        a = find_universal_time_conflict(new_meeting)
+        # room meeting conflicts
+        
+        if a == 1: 
+            for room_it in room.query:
+                if new_meeting.Room_number != str(room_it.Room_number) + " " + room_it.Building:
+                    new_meeting.Room_number  = str(room_it.Room_number) + " " + room_it.Building
+        else: 
+                # employee meeting conflict
+                # we start by finding the possible bounds of time for the meeting by finding the earliest it can start and the latest it can end
+                delta = new_meeting.End - new_meeting.Start
+                min_time = new_meeting.People.employees[0].start_work
+                max_time = new_meeting.People.employees[0].end_work
+                for employee_it in new_meeting.People.employees:
+                    if min_time > employee_it.start_work:
+                        min_time = employee_it.start_work
+                    if max_time < employee_it.end_work:
+                        max_time = employee_it.end_work
+                        
+                max_time =  datetime( 
+                                    year = new_meeting.Start.year,
+                                    month = new_meeting.Start.month,
+                                    day = new_meeting.Start.day,
+                                    hour = employee_it.end_work.hour,
+                                    minute = employee_it.end_work.minute)
+                new_meeting.Start = datetime(
+                                    year = new_meeting.Start.year,
+                                    month = new_meeting.Start.month,
+                                    day = new_meeting.Start.day,
+                                    hour = min_time.hour,
+                                    minute = min_time.minute)
+                new_meeting.End = new_meeting.Start + timedelta(seconds = delta.seconds)
+
+                day_meetings = []
+                for meeting_it in meeting.query:
+                    if (meeting_it.Start.day == new_meeting.Start.day and 
+                       meeting_it.Start.year == new_meeting.Start.year and 
+                       meeting_it.Start.month == new_meeting.Start.month):
+                        day_meetings.append(meeting_it);
+                if find_day_times(new_meeting, day_meetings, max_time,0) != 0:
+                    break
+                else:
+                    new_meeting.Start = new_meeting.Start + timedelta(days = 1)
+                    new_meeting.End = new_meeting.End + timedelta(days = 1)
+    return new_meeting
+        
+    # return a meeting time if we find a valid time for this day
+    # otherwise we return -1
+def find_day_times(meeting, day_meetings, max_time, loop):
+    if meeting.End < max_time:
+        if loop < len(day_meetings):
+            delta = meeting.End - meeting.Start
+            for meeting_it in day_meetings:
+                if find_time_conflict(meeting,meeting_it):
+                    if find_employee_conflict(meeting,meeting_it):
+                        
+                            meeting.Start = meeting_it.Start
+                            meeting.End = meeting.Start + timedelta(seconds = delta.seconds)
+                            loop += 1
+                            find_day_times(meeting, day_meetings, max_time, loop)
+                            return meeting
+            return meeting
+        else:
+            return 0
+    else:
+        return 0
+
+def find_employee_conflict(meeting1,meeting2):
+        for employee_it in meeting1.People.employees:
+            for employee_it2 in meeting2.People.employees:
+                if ((employee_it.name == employee_it2.name) and 
+                    (employee_it.employee_id == employee_it2.employee_id)):
+                    return 1
+        return 0
+
 def reccomend_new_meeting_times(new_meeting,catchloop):
-    # catchloop detects if the program cannot find a suitable meeting on the same day, so picks the next day to have the meeting 
-    for i in catchloop:
-        if i > 10:
+        # catchloop detects if the program cannot find a suitable meeting on the same day, so picks the next day to have the meeting 
+        for i in catchloop:
+            if i > 10:
+                    catchloop = [0,0,0]
+                    new_meeting.Start = new_meeting.Start + timedelta(days=1)
+                    new_meeting.End = new_meeting.End + timedelta(days=1)
+        delta =  new_meeting.End - new_meeting.Start 
+        scuffed_switch = find_universal_time_conflict(new_meeting)
+        if scuffed_switch == 0:
             catchloop = [0,0,0]
-            new_meeting.Start = new_meeting.Start + timedelta(days=1)
-            new_meeting.End = new_meeting.End + timedelta(days=1)
-    delta =  new_meeting.End - new_meeting.Start 
-    scuffed_switch = find_universal_time_conflict(new_meeting)
-    if scuffed_switch == 0:
-        catchloop = [0,0,0]
-        return new_meeting
-    # room meeting conflict
-    elif scuffed_switch == 1: 
-        if debug:
-            print("conflict 1: room and time conflict")
-            print("New meeting Time" + str(new_meeting.Start))
-        for room_it in room.query:
-            if new_meeting.Room_number != str(room_it.Room_number) + " " + room_it.Building:
-               new_meeting.Room_number  = str(room_it.Room_number) + " " + room_it.Building
-               catchloop[2] = catchloop[2] + 1
-               return reccomend_new_meeting_times(new_meeting,catchloop)
+            return new_meeting
+        # room meeting conflict
+        elif scuffed_switch == 1: 
+       # if debug:
+            # print("conflict 1: room and time conflict")
+            # print("New meeting Time" + str(new_meeting.Start))
+            for room_it in room.query:
+                if new_meeting.Room_number != str(room_it.Room_number) + " " + room_it.Building:
+                    new_meeting.Room_number  = str(room_it.Room_number) + " " + room_it.Building
+                    catchloop[2] = catchloop[2] + 1
+                    return reccomend_new_meeting_times(new_meeting,catchloop)
     # employee meeting conflict
-    elif scuffed_switch == 2:
-        if debug:
-            print("conflict 2: Employee time conflict")
-            print("New meeting Time" + str(new_meeting.Start))
-        for  meeting_it in meeting.query:
-            if find_time_conflict(meeting_it,new_meeting) == 1:
-                new_meeting.Start = meeting_it.End + timedelta(minutes=10)
-                new_meeting.End = new_meeting.Start + timedelta(seconds=delta.seconds)
-                catchloop[0] = catchloop[0] + 1
-                return reccomend_new_meeting_times(new_meeting,catchloop)
+        elif scuffed_switch == 2:
+        #if debug:
+            #print("conflict 2: Employee time conflict")
+            #print("New meeting Time" + str(new_meeting.Start))
+            for  meeting_it in meeting.query:
+                if find_time_conflict(meeting_it,new_meeting) == 1:
+                    new_meeting.Start = meeting_it.End + timedelta(minutes=10)
+                    new_meeting.End = new_meeting.Start + timedelta(seconds=delta.seconds)
+                    catchloop[0] = catchloop[0] + 1
+                    return reccomend_new_meeting_times(new_meeting,catchloop)
         
     # employee working hours conflict
-    elif scuffed_switch == 3: 
-        if debug:
-            print("conflict 3: working hour conflict")
-            print("New meeting Time" + str(new_meeting.Start))
-        delta =  new_meeting.End - new_meeting.Start 
-        min = datetime.now()
-        for employee_it in new_meeting.People.employees:
-            if min < datetime.combine(datetime(new_meeting.Start.year,new_meeting.Start.month,new_meeting.Start.day,0,0,0,0), employee_it.start_work):
-                min = datetime.combine(datetime(new_meeting.Start.year,new_meeting.Start.month,new_meeting.Start.day,0,0,0,0), employee_it.start_work)
-        new_meeting.Start = datetime(new_meeting.Start.year, new_meeting.Start.month, new_meeting.Start.day, min.hour, min.minute,0,0) + timedelta(minutes=10)
-        new_meeting.End = new_meeting.Start + timedelta(seconds=delta.seconds)
-        catchloop[1] = catchloop[1] + 1
-        return reccomend_new_meeting_times(new_meeting,catchloop)
+        elif scuffed_switch == 3: 
+            # if debug:
+                # print("conflict 3: working hour conflict")
+                # print("New meeting Time" + str(new_meeting.Start))
+            delta =  new_meeting.End - new_meeting.Start 
+            min = datetime.now()
+            for employee_it in new_meeting.People.employees:
+                if min < datetime.combine(datetime(new_meeting.Start.year,new_meeting.Start.month,new_meeting.Start.day,0,0,0,0), employee_it.start_work):
+                    min = datetime.combine(datetime(new_meeting.Start.year,new_meeting.Start.month,new_meeting.Start.day,0,0,0,0), employee_it.start_work)
+            new_meeting.Start = datetime(new_meeting.Start.year, new_meeting.Start.month, new_meeting.Start.day, min.hour, min.minute,0,0) + timedelta(minutes=10)
+            new_meeting.End = new_meeting.Start + timedelta(seconds=delta.seconds)
+            catchloop[1] = catchloop[1] + 1
+            return reccomend_new_meeting_times(new_meeting,catchloop)
 
 
 # return 0 if there is no time conflict
@@ -400,15 +492,15 @@ def reccomend_new_meeting_times(new_meeting,catchloop):
 # return 3 if there is an conflict with employee working hours 
 def find_universal_time_conflict(new_meeting):
     for  meeting_it in meeting.query:
-        if find_time_conflict(meeting_it,new_meeting) == 1:
-            if (meeting_it.Room_number == new_meeting.Room_number):
-                    if debug:
-                        print("The meeting at time" + str(meeting_it.Start) + " to " + str(meeting_it.End) + " Conflicts with " + str(new_meeting.Start) + " to " + str(new_meeting.End))
+        # only check for the time conflict if the meeting are on the same day
+        if meeting_it.Start.day == new_meeting.Start.day:
+            if find_time_conflict(meeting_it,new_meeting) == 1:
+                if (meeting_it.Room_number == new_meeting.Room_number):
                     return 1
-            for employee_it1 in meeting_it.People.employees:
-                for employee_it2 in new_meeting.People.employees:
-                    if (employee_it1.name == employee_it2.name) and (employee_it1.employee_id == employee_it2.employee_id):
-                        return 2
+                for employee_it1 in meeting_it.People.employees:
+                    for employee_it2 in new_meeting.People.employees:
+                        if (employee_it1.name == employee_it2.name) and (employee_it1.employee_id == employee_it2.employee_id):
+                            return 2
     for  employee_it in new_meeting.People.employees:
         if find_working_hours_conflict(new_meeting,employee_it):
             return 3                
@@ -521,13 +613,20 @@ def return_meeting_times(start_date,end_date):
 # return -1 if there is a type error
 def find_time_conflict(meeting1,meeting2):
     if ((type(meeting1) is meeting) and (type(meeting2) is meeting)): 
-        if  ((datetime.fromisoformat(str(meeting1.End))   > datetime.fromisoformat(str(meeting2.Start)) and 
-                datetime.fromisoformat(str(meeting1.Start)) < datetime.fromisoformat(str(meeting2.End)))  or 
-            (datetime.fromisoformat(str(meeting1.End))   < datetime.fromisoformat(str(meeting2.Start)) and 
-                datetime.fromisoformat(str(meeting1.Start)) > datetime.fromisoformat(str(meeting2.End)))):
-            return 1
+        if meeting1.Start.day == meeting2.Start.day:
+            # if  ((datetime.fromisoformat(str(meeting1.End))   > datetime.fromisoformat(str(meeting2.Start)) and 
+            #         datetime.fromisoformat(str(meeting1.Start)) < datetime.fromisoformat(str(meeting2.End)))  or 
+            #     (datetime.fromisoformat(str(meeting1.End))   < datetime.fromisoformat(str(meeting2.Start)) and 
+            #         datetime.fromisoformat(str(meeting1.Start)) > datetime.fromisoformat(str(meeting2.End)))):
+            if  ((meeting1.End   > meeting2.Start) and 
+                 ( meeting1.Start < meeting2.End) or 
+                 ( meeting1.End   < meeting2.Start) and 
+                 ( meeting1.Start > meeting2.End)):
+                return 1
+            else:
+                return 0
         else:
-            return 0
+             return 0
     else: 
         return -1
 
