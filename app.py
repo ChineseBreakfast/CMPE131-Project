@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
 debug = 1
-NUMBER_OF_MEETINGS = 150
+NUMBER_OF_MEETINGS = 100
 
 app = Flask(__name__)
 
@@ -69,19 +69,10 @@ def setsave(value):
 @app.route("/")    
 def home():
     populate_database()
-    week_start = datetime.now().isoweekday()
-    delta_day = week_start - 1
-    mon_date = datetime(year = datetime.now().year, month = datetime.now().month, day = datetime.now().day) - timedelta(days= delta_day)
-    meeting_list = return_meeting_times(datetime.now(),datetime.now()+timedelta(days=7))
-    meeting_list = json.dumps(meeting_list)
-    get_week_meetings(datetime.now()+timedelta(days = 6))
-    #if debug:
-            #print_all_meetings()
-    return render_template('index.html',meeting_list = meeting_list)
+    return render_template('index.html')
+
 
 # Handles the user input when a meeting error is detected
-      
-         
 @app.route('/input_meeting', methods = ["GET","POST"])
 def data_submit1():
     alert = [-1,"0"]
@@ -265,7 +256,7 @@ def generate_random_meetings(number):
                 employee_list.append(person)
         if len(employee_list) == 0:
             for person in employee.query:
-                if random.random() > 1:
+                if random.random() > 0:
                     employee_list.append(person)
         test_group = group("testgroup",employee_list)       
 

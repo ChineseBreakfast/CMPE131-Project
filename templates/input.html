@@ -184,7 +184,7 @@
                         <!-- Participant selection  -->
                         <div class="form-group">
                             <div id = "selection">
-                                <select name="select" list="namesDataList" id="namesInput"  multiple multiselect-search = "true" multiselect-hide-x = "true" >
+                                <select name="select" list="namesDataList" id="namesInput"  multiple multiselect-search = "true" multiselect-hide-x = "true" required>
                                 </select>
                                 <script>
                                     // import the names and convert it to an array using JSON
@@ -257,10 +257,6 @@
                           }
                         }
                     </script>
-                    <!--for for adding people-->
-                    
-                                    <!-- A button to open the popup form -->
-                <button class="open-button" onclick="openForm()">Open Form</button> 
                 </div>
                 <div id = "editmenu" class = "tabcontent">
                     <h2>Meeting:</h2>
@@ -294,7 +290,13 @@
             </div>
         </div>
     </div>
-    <!-- The form -->
+</div>
+    <script src="/static/js/calendar_logic.js"> </script>
+        <div class="container1"></div>
+            <script src = /static/js/week_logic.js></script>
+<div>
+
+    <button class="open-button" onclick="openForm()">Open Form</button> 
     <div class="form-popup" id="myForm">
         <form action="/input_Room" method = "POST" class="form-container">
             <h1>Add a Meeting Room</h1>
@@ -319,8 +321,5 @@
         </script>
     </div>
 </div>
-    <script src="/static/js/calendar_logic.js"> </script>
-        <div class="container1"></div>
-            <script src = /static/js/week_logic.js></script>
-
+            
 </body>
