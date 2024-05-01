@@ -276,10 +276,46 @@
                                     <!-- A button to open the popup form -->
                 <button class="open-button" onclick="openForm()">Open Form</button>
                 </div>
+
+                <!--Editing Menu-->
                 <div id = "editmenu" class = "tabcontent">
                     <h2>Meeting:</h2>
-                    <p>Room Number:<p>
+                        <div id = "selection">
+                            <label for="Room_select1">Meeting Room:</label>
+                            <select name="Room_select1" list="Room_list" id="Room_select1"> 
+                            <option value ="-1" >--Select a Meeting Room--</option>
+                            </select>
+                            <script>
+                                // import the names and convert it to an array using JSON
+                                var rooms1 = '{{ rooms | tojson}}'
+                                rooms1 = JSON.parse(rooms1);
+                                
+                                const Room_select1 = document.getElementById('Room_select1');
+                        
+                                // This is that input field
+                                function populateList(arr) {
+                                    arr.forEach(country => {
+                                    var option = document.createElement("option");
+                                    option.innerHTML = country;
+                                    Room_select1.appendChild(option);
+                                });
+                                }
+                                populateList(rooms);
+                            </script>
+                        </div>
                     <h3>People:</h3>
+                        <div id = "peoplebox">
+                            <script>
+                                var meetingNames = '{{ info | tojson}}';
+                                meetingNames = JSON.parse(meetingNames);
+
+                                for(let i = 0; i < meetingNames.length -1; i++)
+                                {
+                                    print(meetingNames);
+                                }
+                            </script>
+                            test
+                        </div>
                     
                     <div class="form-group">   
                         <label for="Meeting_Start_Time">Start:</label>
@@ -289,9 +325,34 @@
                         <input type="time" class="form-control" id="End" name="End" required>
                     </div>
                     <button type="submit" class="btn btn-success">Submit</button>  
-                    <button id = "remove" type="submit" class="btn btn-success">Remove</button> 
 
                     <h2>Select Person</h2>
+                    <div class="form-group">
+                        <div id = "selection">
+                            <label for="Name_select1">Person: </label>
+                            <select name="select1" list="namesDataList" id="NameInput1"> 
+                            <option value ="-1" >--Select a Name --</option>
+                            </select>
+                            <script>
+                                // import the names and convert it to an array using JSON
+                                var names1 = '{{ info | tojson}}';
+                                names1 = JSON.parse(names1);
+                                
+                                const select1 = document.getElementById('namesInput1');
+                        
+                                // This is that input field
+                                function populateList(arr) {
+                                    arr.forEach(country => {
+                                    var option = document.createElement("option");
+                                    option.innerHTML = country;
+                                    select1.appendChild(option);
+                                });
+                                }
+                                populateList(names);
+                        
+                            </script>
+                        </div>
+                    </div>
                     <p>Date of Birth:</p>
                     <h3>Work Times</h3>
                    
@@ -303,7 +364,6 @@
                         <input type="time" class="form-control" id="End" name="End" required>
                     <div>
                     <button type="submit" class="btn btn-success">Submit</button>  
-                    <button id = "remove" type="submit" class="btn btn-success">Remove</button> 
                 </div>
             </div>
         </div>
