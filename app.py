@@ -137,7 +137,10 @@ def data_submit1():
             #recommended_meeting = reccomend_new_meeting_times(recommended_meeting, [0,0,0])
 
 
-            
+            i = 0
+            if (new_meeting.Room_number == '-1' ):
+                new_meeting.Room_number = str(room.query.get(i+1).Room_number) + " " + room.query.get(i+1).Building
+                
             # we will use global variables to save our meeting objects during the context switch from python to javascript
             setsave(new_meeting)
             setglobal(recommended_meeting)
@@ -424,7 +427,7 @@ def find_day_times(meeting, day_meetings, max_time, loop):
                         loop += 1
                         return find_day_times(meeting, day_meetings, max_time, loop)
                     i = 0
-                    while(meeting.Room_number == meeting_it.Room_number):
+                    while(meeting.Room_number == meeting_it.Room_number or meeting.Room_number == '-1' ):
                         meeting.Room_number = str(room.query.get(i+1).Room_number) + " " + room.query.get(i+1).Building
                         i += 1
                         if i > room.query.count()-1:
