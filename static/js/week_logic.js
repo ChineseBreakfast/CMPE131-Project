@@ -5,7 +5,7 @@
 
         // Get the list of meetings for the render_day
         meetings = return_weeks_meetings(render_day);
-        console.log("Meetings: ", meetings);
+        // console.log("Meetings: ", meetings);
         sortStack(meetings);
         var MeetingsM = parceMeetingTimes(1, meetings);
         var MeetingsT = parceMeetingTimes(2, meetings);
@@ -16,16 +16,16 @@
         var MeetingsSa = parceMeetingTimes(6, meetings);
         var MeetingsSu = parceMeetingTimes(0, meetings);
 
-        console.log("Meetings: ", meetings);
-        //console.log("Meetings: ", sortStack(meetings));
-        console.log("MeetingsM: ", MeetingsM);
-        console.log("MeetingsT: ", MeetingsT);
-        console.log("MeetingsW: ", MeetingsW);
-        //console.log("SortedMeetingsW: ", sortedWed);
-        console.log("MeetingsTh: ", MeetingsTh);
-        console.log("MeetingsF: ", MeetingsF);
-        console.log("MeetingsSa: ", MeetingsSa);
-        console.log("MeetingsSu: ", MeetingsSu);
+        // console.log("Meetings: ", meetings);
+        // //console.log("Meetings: ", sortStack(meetings));
+        // console.log("MeetingsM: ", MeetingsM);
+        // console.log("MeetingsT: ", MeetingsT);
+        // console.log("MeetingsW: ", MeetingsW);
+        // //console.log("SortedMeetingsW: ", sortedWed);
+        // console.log("MeetingsTh: ", MeetingsTh);
+        // console.log("MeetingsF: ", MeetingsF);
+        // console.log("MeetingsSa: ", MeetingsSa);
+        // console.log("MeetingsSu: ", MeetingsSu);
 
         // select the container for html injection
         const show_week = document.querySelector(".container1");
@@ -71,7 +71,7 @@
                     <p2>${m.Description}</p2>
                     </div>`;
                     offset = offsetCal(offset, 20, 15, 130, count);
-                    console.log("MeetingID:" + offset);
+                    //console.log("MeetingID:" + offset);
                     count++;
                     
                 }
@@ -201,5 +201,5 @@
         arr.sort((a, b) => new Date(a.start) - new Date(b.start));
     }
 
-    const today1 = new Date();
+    today1 = new Date();
     render_week(today1);

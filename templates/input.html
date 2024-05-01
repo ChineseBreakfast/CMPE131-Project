@@ -21,6 +21,7 @@
     }</style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     
 </head>
 
@@ -42,8 +43,8 @@
 	    start_time = meeting_list[0].start;
         employee_array = meeting_list[0].attendies;
         var a = 1;
+        
     </script>
-
     <script>
         a = 0;
         var title = "";
@@ -103,11 +104,16 @@
                 a = 3;
             }
             $.ajax({ 
-                url: '/return', 
-                type: 'POST', 
+                type: 'GET', 
+                url: "{{ url_for( 'data_submit1' ) }}",
                 data: {'response' : a},
-                success: function(response){ 
-                $('#main').text(response)} 
+                success: function(response){
+                    a = response;
+                    document.body.innerHTML = '';
+                    document.write(a);
+                }
+            
+               
                 })
         })
     }
@@ -184,7 +190,7 @@
                                     var names = '{{ info | tojson}}';
                                     names = JSON.parse(names);
                                     
-                                    const select = document.getElementById('namesInput');
+                                    select = document.getElementById('namesInput');
                             
                                     // This is that input field
                                     function populateList(arr) {
@@ -224,7 +230,7 @@
                                 var rooms = '{{ rooms | tojson}}'
                                 rooms = JSON.parse(rooms);
                                 
-                                const Room_select = document.getElementById('Room_select');
+                                Room_select = document.getElementById('Room_select');
                         
                                 // This is that input field
                                 function populateList(arr) {
@@ -312,8 +318,9 @@
             }
         </script>
     </div>
-        </div>
+</div>
     <script src="/static/js/calendar_logic.js"> </script>
         <div class="container1"></div>
             <script src = /static/js/week_logic.js></script>
+
 </body>

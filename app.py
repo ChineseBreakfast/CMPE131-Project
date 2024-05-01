@@ -10,12 +10,11 @@ from flask import Flask, render_template, request, redirect, url_for, current_ap
 debug = 1
 NUMBER_OF_MEETINGS = 50
 
-
-
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.debug = True
 db = SQLAlchemy(app)
 
 
@@ -77,13 +76,15 @@ def home():
     get_week_meetings(datetime.now()+timedelta(days = 6))
     #if debug:
             #print_all_meetings()
-    return render_template('index.html',meeting_list =meeting_list)
+    return render_template('index.html',meeting_list = meeting_list)
 
 # Handles the user input when a meeting error is detected
-@app.route('/return', methods = ["GET","POST"])
-def handle_meeting_error():
+      
+         
+@app.route('/input_meeting', methods = ["GET","POST"])
+def data_submit1():
     alert = [-1,"0"]
-    if request.method == "POST":
+    if request.method == "GET":
         answer = request.values.get('response')
         if (answer == '1'):
             db.session.add(global_meeting)
@@ -93,11 +94,8 @@ def handle_meeting_error():
             db.session.commit()
         setsave(meeting())
         setglobal(meeting())
-    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
-            
-@app.route('/input_meeting', methods = ["GET","POST"])
-def data_submit1():
-    alert = [-1,"0"]
+        return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
+
 
     # When the user posts a meeting
     if request.method == "POST":
@@ -171,7 +169,7 @@ def data_submit1():
             db.session.add(new_meeting)
             db.session.commit()    
             
-    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
+        return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
 
 # route from employee form submit
 @app.route('/input_employee', methods = ["GET","POST"])

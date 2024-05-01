@@ -1,8 +1,8 @@
 // From this video https://www.youtube.com/watch?v=o1yMqPyYeAo
 
-const date = new Date();
+date = new Date();
 
-const renderCalendar = () => {
+renderCalendar = () => {
     
     date.setDate(1);
 
@@ -126,7 +126,7 @@ function return_weeks_meetings(input_day){
 };
 
 renderCalendar();
-const today = new Date();
+ today = new Date();
 
 
 
