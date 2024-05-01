@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
 debug = 1
-NUMBER_OF_MEETINGS = 50
+NUMBER_OF_MEETINGS = 150
 
 app = Flask(__name__)
 
@@ -117,13 +117,12 @@ def data_submit1():
         
         # we initialize the names from the form submission into employee objects that we can pass to the schedule checking function
         names = request.form.getlist("select")
-        employee_names = employee.query
         names_object = group("",[])
-        count = 0
-        for i in employee_names:
-            if ((count < len(names)) and (i.name == names[count])):
-                names_object.employees.append(employee_names[count])
-                count = count+1
+        for i in employee.query:
+            for j in names:
+                if (i.name == j):
+                    names_object.employees.append(i)
+                    break
 
         # Create a new object with the data from the form submission, then commit it to the database
         new_meeting = meeting(Meeting_id = meeting.query.count()+1, Start = start, End = end, Room_number = room_number, People = names_object, Description = meeting_description)
@@ -155,7 +154,7 @@ def data_submit1():
                 alert[0] = 2
                 alert[1] = "The following employees have meetings at this time:"
                 for employee_it in employee_conflict_list:
-                    alert[1] = alert[1] + str(employee_it) + " "
+                    alert[1] = alert[1] + str(employee_it.name) + " "
                 alert[1] = alert[1] + ", would you like to reschedule the meeting for this start time: "  + str(recommended_meeting.Start) + " ?"
                 return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
             
@@ -168,7 +167,8 @@ def data_submit1():
         else:
             db.session.add(new_meeting)
             db.session.commit()    
-            
+        setsave(meeting())
+        setglobal(meeting())    
         return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
 
 # route from employee form submit
@@ -423,9 +423,12 @@ def find_day_times(meeting, day_meetings, max_time, loop):
                         meeting.End = meeting.Start + timedelta(seconds = delta.seconds)
                         loop += 1
                         return find_day_times(meeting, day_meetings, max_time, loop)
-                while (meeting.Room_number == meeting_it.Room_number):
-                    test_room = room.query.get(random.randrange(1,room.query.count(),1))
-                    meeting.Room_number = str(test_room.Room_number) +" "+ str(test_room.Building)
+                    i = 0
+                    while(meeting.Room_number == meeting_it.Room_number):
+                        meeting.Room_number = str(room.query.get(i+1).Room_number) + " " + room.query.get(i+1).Building
+                        i += 1
+                        if i > room.query.count()-1:
+                            return -1
             return meeting
         else:
             return 0

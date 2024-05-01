@@ -213,7 +213,12 @@ function MultiselectDropdown(options){
     });    
   });
 }
-
+document.addEventListener('load',()=>{
+  MultiselectDropdown(window.MultiselectDropdownOptions);
+});
 window.addEventListener('load',()=>{
+  MultiselectDropdown(window.MultiselectDropdownOptions);
+});
+window.addEventListener('reload',()=>{
   MultiselectDropdown(window.MultiselectDropdownOptions);
 });
