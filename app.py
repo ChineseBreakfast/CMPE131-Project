@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, redirect, url_for, current_app, g 
 
 debug = 1
-NUMBER_OF_MEETINGS = 100
+NUMBER_OF_MEETINGS = 20
 
 app = Flask(__name__)
 
@@ -69,7 +69,7 @@ def setsave(value):
 @app.route("/")    
 def home():
     populate_database()
-    return render_template('index.html')
+    return render_template('index.html', valid = '1')
 
 
 # Handles the user input when a meeting error is detected
@@ -191,7 +191,7 @@ def data_submit2():
         new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = start_work, end_work = end_work, Password = password)
         db.session.add(new_employee)
         db.session.commit()
-    return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert,meeting_list = return_all_meetings())
+    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
          
 # route from room form submit
 @app.route('/input_Room', methods = ["GET","POST"])
@@ -204,22 +204,21 @@ def data_submit3():
         new_room = room(Room_number = Room_number, Building = Building)
         for i in range(room.query.count()):
             temp_room = room.query.get(i+1)
-            if temp_room.Room_number == int(Room_number):
-                found = 1
-                break
-        if found == 0 :
-            new_room = room(Room_number = Room_number, Building = Building)
-            db.session.add(new_room)
-            db.session.commit()
-    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = (3,alert),meeting_list = return_all_meetings())
+            if (temp_room.Room_number == int(Room_number)) and (temp_room.Building == Building):
+                alert[0] = 7
+                alert[1] = "This conference Room Already Exists"
+                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
+        new_room = room(Room_number = Room_number, Building = Building)
+        db.session.add(new_room)
+        db.session.commit()
+    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
       
 
 
-
+# gets the password and username, checks if they are valid, if true go to input.html, otherwise tell the user that the username or password is faulty 
 @app.route('/login', methods = ["GET","POST"])
 def hello_there():  
     if request.method == "POST":
-        return_meeting_times(datetime.now(), datetime.now()+timedelta(days= 1, hours = 2))
         username = request.form.get("username")
         password = request.form.get("password")
         employee_num = employee.query.count()
@@ -227,25 +226,19 @@ def hello_there():
         for i in range(employee.query.count()):
             info = employee.query.get(i+1)
             if (info.name == username) and (info.Password == password):
-
                 return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = [-1,"0"],  meeting_list = return_all_meetings())
-
-@app.route('/get_valid_rooms', methods = ["PATCH"])
-def return_valid_rooms():
-    value = 1
-    return
-    
-# todo; once the password is collected, we need to check 
-# it against all of the other passwords in the database
-    return render_template('index.html')
+            else:
+                return render_template('index.html', valid = '0')
+    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = [-1,"0"],  meeting_list = return_all_meetings())
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-
+# returns all meetings in a json dumb so we can use them in javascript
 def return_all_meetings():
     return json.dumps(return_meeting_times(datetime.min,datetime.max))
 
+# Generate a lot of random meetings for testing 
 def generate_random_meetings(number):
     random_meetings = []
     for meeting_number in range(0,number):
@@ -261,7 +254,7 @@ def generate_random_meetings(number):
         test_group = group("testgroup",employee_list)       
 
         # create a random start time within the week, and the duration of the meeting 
-        start_time_days = random.randrange(0,27,1)
+        start_time_days = random.randrange(0,13,1)
         start_time_hours =  random.randrange(9,17,1)
         meeting_time = random.randrange(30,240,5)
         start_date = datetime(year = datetime.now().year, month=datetime.now().month,  day = datetime.now().day)
@@ -276,7 +269,8 @@ def generate_random_meetings(number):
         db.session.add(recommend_new_meeting_time(new_meeting))
         db.session.commit()
     return random_meetings
-        
+
+# Populate the database if it is empty         
 def populate_database():
     db.create_all()
     if  employee.query.count() == 0:
@@ -320,7 +314,6 @@ def populate_database():
         #     Description = "Test_meeting: " + str(meeting.query.count()+1)),2)
         # db.session.commit()
             
-
 # return a list of employees objects who have time conflicts with the proposed meeting
 def find_meeting_conflicts(new_meeting):
     employee_conflict_list = []
@@ -354,7 +347,7 @@ def find_meeting_conflicts(new_meeting):
                             print(str(old_meeting.Start) +" to \n"+ str(old_meeting.End))
     return employee_conflict_list # return the conflict list 
 
-
+# recommend the first avaliable new meeting time if a conflict is found 
 def recommend_new_meeting_time(new_meeting):
     delta = new_meeting.End - new_meeting.Start
     min_time = new_meeting.People.employees[0].start_work
@@ -394,7 +387,7 @@ def recommend_new_meeting_time(new_meeting):
 
     return new_meeting
 
-    # returns all of the meetings on a specific day 
+# returns all of the meetings on a specific day 
 def return_day_set(new_meeting):
     day_meetings = []
     for meeting_it in meeting.query:
@@ -404,8 +397,7 @@ def return_day_set(new_meeting):
             day_meetings.append(meeting_it)
     return day_meetings
 
-    # return a meeting time if we find a valid time for this day
-    # otherwise we return -1
+# return a meeting time if we find a valid time for this day otherwise we return -1
 def find_day_times(meeting, day_meetings, max_time, loop):
     if meeting.End < max_time:
         if loop <= len(day_meetings):
@@ -430,6 +422,7 @@ def find_day_times(meeting, day_meetings, max_time, loop):
     else:
         return 0
 
+# old version do not use
 def find_employee_conflict(meeting1,meeting2):
         for employee_it in meeting1.People.employees:
             for employee_it2 in meeting2.People.employees:
@@ -438,6 +431,7 @@ def find_employee_conflict(meeting1,meeting2):
                     return 1
         return 0
 
+# old version do not use
 def reccomend_new_meeting_times(new_meeting,catchloop):
         # catchloop detects if the program cannot find a suitable meeting on the same day, so picks the next day to have the meeting 
         for i in catchloop:
@@ -486,7 +480,6 @@ def reccomend_new_meeting_times(new_meeting,catchloop):
             new_meeting.End = new_meeting.Start + timedelta(seconds=delta.seconds)
             catchloop[1] = catchloop[1] + 1
             return reccomend_new_meeting_times(new_meeting,catchloop)
-
 
 # return 0 if there is no time conflict
 # return 1 if there is a room conflict
@@ -577,9 +570,8 @@ def return_all_meeting_Ids():
         return_meetings.append(i.Meeting_id)
     return return_meetings
 
-# output is an array of meeting times, the input is 2 dates 
+# output is an array of meeting times, the input is 2 dates, the function will return all meetings that take place in this time, 
 # on error returns -1 
-# returns
 def return_meeting_times(start_date,end_date):
     return_meeting_objects = []
     #check if the inputs are valid datetime objects 
@@ -631,10 +623,10 @@ def find_time_conflict(meeting1,meeting2):
     else: 
         return -1
 
+# Print out all of the meetings for debug 
 def print_all_meetings():
     for meeting_it in meeting.query:
         print_meeting_data(meeting_it)
-
 
 # given a day, the function will return all of the meeting objects for that week 
 def get_week_meetings(day):
@@ -643,7 +635,6 @@ def get_week_meetings(day):
     delta_day = week_start - 1
     mon_date = datetime(year = datetime.now().year, month = datetime.now().month, day = datetime.now().day) - timedelta(days= delta_day)
     return return_meeting_times(mon_date,mon_date+timedelta(days=7))
-
 
 # print meeting data 
 def print_meeting_data(meeting):

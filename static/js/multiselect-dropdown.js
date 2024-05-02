@@ -23,6 +23,7 @@ style.innerHTML = `
 .multiselect-dropdown span.optext{
   background-color:lightgray;
   padding:1px 0.75em; 
+  text-wrap:nowrap;
 }
 .multiselect-dropdown span.optext .optdel {
   float: right;

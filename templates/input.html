@@ -244,7 +244,7 @@
                             </script>
                              <br>
                              <label for="Meeting_description">Description:</label><br>
-                             <input type="text" class="form-control3" id="Meeting_description" name="Meeting_description"><br> </input>
+                             <textarea  class="form-control3" id="Meeting_description" name="Meeting_description" autocorrect = "on" > </textarea><br>
                              <button type="submit" class="btn btn-success">Schedule Meeting</button>
                         </div>
                         
@@ -296,30 +296,103 @@
             <script src = /static/js/week_logic.js></script>
 <div>
 
-    <button class="open-button" onclick="openForm()">Open Form</button> 
-    <div class="form-popup" id="myForm">
+    <button class="open_add_employee_menu" onclick="openForm_employee()"></button> 
+    <div class="hover_text">Add an employee</div>
+    <div class="form-popup1" id="myForm1">
+        <form action="/input_employee" method = "POST" class="form-container">
+            <h1></h1>
+
+            <label for="Employee Name"><b>Full Name</b></label>
+            <input type="text" placeholder="Employee Name" name ="name" style = "text-align: center; border-radius: 8px;" required>
+
+            <label for="Age" style = "text-align: center;"><b>Age</b></label>
+            <input type="text" placeholder="Age" name = "age" style = "text-align: center; border-radius: 8px;" reqired>  <br>
+
+            <label for="Password"  style = "text-align: center;"><b>Password</b></label>
+            <input type= "password" placeholder="****" name = "password" style = "text-align: center; border-radius: 8px;" required >  <br>
+
+            <label for="Clock In" style = "text-align: center;">Clock In</label> <br>
+            <input type="time" class="input_time id="Start" name="start_work" style = "text-align: center; border-radius: 8px; padding: 5px;" required> <br>
+                                   
+            <label for="Clock Out">Clock Out</label><br>
+            <input type="time" class="Input_time" id="End" name="end_work" style = "text-align: center; border-radius: 8px; padding: 5px;" required>  <br>
+
+            <button type="submit" class="btn" style="border-radius: 15px;" ">Add</button>
+            <button type="button" class="btn cancel" style="border-radius: 15px;" onclick="closeForm_employee()">Close</button>
+        </form>
+        <script>
+            function openForm_employee() {
+            if (document.getElementById("myForm1").style.display != "block")
+            {
+                if (document.getElementById("myForm2").style.display == "block") {
+                    document.getElementById("myForm2").style.display = "";
+                }
+                document.getElementById("myForm1").style.display = "block";
+            }
+            else {
+            document.getElementById("myForm1").style.display = "";
+            document.getElementById("myForm2").style.display = "";
+            }
+            }
+
+            function closeForm_employee() {
+            document.getElementById("myForm1").style.display = "";
+            }
+        </script>
+    </div>
+    <button class="open_add_meeting_room_menu" onclick="openForm_room()"></button> 
+    <div class = "hover_text">Add a confrence Room</div>
+    <div class="form-popup2" id="myForm2">
         <form action="/input_Room" method = "POST" class="form-container">
             <h1>Add a Meeting Room</h1>
 
             <label for="Room Number"><b>Room Number</b></label>
-            <input type="text" placeholder="Enter Room Number" name ="Room Number" required>
+            <input type="text" placeholder="" name ="Room Number"  style = "text-align: center; border-radius: 8px;" required>
 
             <label for="Building Name"><b>Building</b></label>
-            <input type="text" placeholder="Enter Building name" name = "Building">
+            <input type="text" placeholder="" style = "text-align: center; border-radius: 8px;"  name = "Building">
 
-            <button type="submit" class="btn">Add</button>
-            <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+            <button type="submit" class="btn" style="border-radius: 15px;" >Add</button>
+            <button type="button" class="btn cancel"  style="border-radius: 15px;" onclick="closeForm_room()">Close</button>
         </form>
         <script>
-            function openForm() {
-            document.getElementById("myForm").style.display = "block";
+            function openForm_room() {
+                if (document.getElementById("myForm2").style.display != "block")
+            {
+                if (document.getElementById("myForm1").style.display == "block") {
+                    document.getElementById("myForm1").style.display = "";
+                }
+                document.getElementById("myForm2").style.display = "block";
+            }
+            else {
+            document.getElementById("myForm2").style.display = "";
+            document.getElementById("myForm1").style.display = "";
+            }
             }
 
-            function closeForm() {
-            document.getElementById("myForm").style.display = "none";
+            function closeForm_room() {
+            document.getElementById("myForm2").style.display = "";
             }
+        </script>
+        <script>
+        document.onkeydown = function(evt) {
+    evt = evt || window.event;
+    var isEscape = false;
+    if ("key" in evt) {
+        isEscape = (evt.key === "Escape" || evt.key === "Esc");
+    }
+    if (isEscape) {
+        closeForm_room();
+        closeForm_employee();
+    }
+};
         </script>
     </div>
 </div>
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
             
 </body>

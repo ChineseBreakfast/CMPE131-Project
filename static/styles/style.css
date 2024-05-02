@@ -11,6 +11,25 @@ head{
   font-family: "Quicksand", sans-serif; 
   }
 
+.error{
+
+    color: red;
+    opacity: 0;
+  }
+
+  body.loaded .error{
+
+    color: red;
+    transition-duration: 0.25s;
+    opacity: 1;
+  }
+
+  body.loaded .error{
+
+    color: red;
+    transition-duration: 0.25s;
+    opacity: 1;
+  }
 body{ 
     background-image: url(https://wallpaper.dog/large/20395458.jpg);
     background-repeat: no-repeat;
@@ -27,17 +46,8 @@ body{
     margin-right: auto;
     text-align: center;*/
 }
-
-h1{
-    font-family: "OCR A Std, monospace";
-}
-
-p{
-    font-family: "consolas";
-    opacity: 1
-}
-
 #box{
+  font-family: "Quicksand", sans-serif; 
     margin-top: 300px;
     margin-left: auto;
     margin-right: auto;
@@ -47,13 +57,17 @@ p{
     width: 500px;
     height: 300px;
     background-color: rgb(255, 255, 255,.3);
+    font-size: x-large;
 
+}
+.login{
+  font-family: "Quicksand", sans-serif; 
+  border-radius: 15px;
 }
 
 
-
   .container {
-    width: 28.25%;
+    width: 29%;
     height: 40%;
     justify-content: center;
     position:inherit;
@@ -233,7 +247,7 @@ input[type=reset]:hover{
 }
 /*menus*/
 .menus{ 
-    width: 28.5%;
+    width: 28.3%;
     height: 60%;
     border-radius: 15px;
     background-color: rgba(190, 193, 204, 0.774);
@@ -336,22 +350,8 @@ button[type=submit]:hover{
   position:fixed;
 }
 
-/* The popup form - hidden by default */
-.form-popup {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  right: 15px;
-  border: 3px solid #f1f1f1;
-  z-index: 9;
-}
-
 /* Add styles to the form container */
-.form-container {
-  max-width: 300px;
-  padding: 10px;
-  background-color: white;
-}
+
 
 /* Full-width input fields */
 .form-container input[type=text], .form-container input[type=password] {
@@ -468,8 +468,8 @@ canvas :hover{
 }
 
 .meeting_info {
-  visibility:hidden;
-  display: block;
+
+  visibility: hidden;
   float:inline-start;
   margin-top: -1000%;
 margin-bottom: -1000%;
@@ -479,7 +479,8 @@ margin-left: -1000%;
 }
 .a:hover + .meeting_info{
 z-index:999;
-
+transition-duration: 0.5s;
+display: block;
 visibility: visible;
 overflow-x: visible;
 float:inline-start;
@@ -494,20 +495,23 @@ padding: 5%;
 border-radius: 25px;
 align-items: center;
 align-content: center;
-transition-duration: 0.5s;
+
 }
 
 .p2 {
+  display: block;
   word-wrap:normal;
-
+  text-wrap:stable;
 
 }
 
 .mt-3{
+  display: block;
   text-align: left;
 }
 
 .mt-4{
+  display: block;
   text-shadow: 0 0.3rem .5rem rgba(0, 0, 0, 0.15);
   margin-top: 10px;
   text-align: center;
@@ -517,6 +521,7 @@ transition-duration: 0.5s;
 
 .tabcontent
 {
+  display: block;
   text-shadow: 0 0.3rem .5rem rgba(0, 0, 0, 0.15);
   text-align: center;
 }
@@ -548,8 +553,9 @@ transition-duration: 0.5s;
   border-radius: 10px;
   padding-bottom: 4px;
   border: .1rem solid rgb(120, 120, 120);
-  text-align: left;
-  vertical-align:text-top;
+  text-align: center;
+  text-wrap: balance;
+  vertical-align: top;
   margin-bottom: 5px;
 }
 .form-group1
@@ -572,4 +578,116 @@ transition-duration: 0.5s;
   text-align: left;
   font-size: 1.2rem;
   margin-bottom: 5px;
+}
+
+/*css code for add employee and room menus*/
+.open_add_employee_menu{
+  background-image: url("add_employee.png");
+  background-color: #be4b088f;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  border: none;
+  cursor: pointer;
+  bottom: 20px;
+  right: 25px;
+  width: 100px;
+  height: 50px;
+  position:fixed;
+  border-radius: 10px;
+}
+.open_add_meeting_room_menu{
+  background-image: url("add_room.png");
+  background-color: #d4ab50c0;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  border: none;
+  cursor: pointer;
+  bottom: 80px;
+  right: 25px;
+  width: 100px;
+  height: 50px;
+  position:fixed;
+  border-radius: 10px;
+}
+.open_add_employee_menu:hover {
+opacity: 1;
+transition-duration: 0.25s;
+}
+.open_add_meeting_room_menu:hover {
+  opacity: 1;
+  transition-duration: 0.25s;
+}
+
+.hover_text{
+    visibility:hidden;
+    z-index:9999;
+    position: fixed;
+}
+
+.open_add_employee_menu:hover +  .hover_text{
+  visibility: visible;
+  bottom: 35px;
+  right: 140px;
+  padding: 3px;
+  color:white;
+  background-color: #795a5a;
+  border: black;
+  border-radius: 5px;
+  transition-duration: 0.5s;
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.7);
+
+}
+.open_add_meeting_room_menu:hover + .hover_text{
+  visibility: visible;
+  bottom: 93px;
+  right: 140px;
+  color:white;
+  background-color: #aa937e;
+  border: black;
+  padding: 3px;
+  border-radius: 5px;
+  transition-duration: 0.5s;
+  text-shadow: 0 1rem 3rem rgba(0,0,0,0.7);
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.7);
+
+}
+
+/* The popup form - hidden by default */
+.form-popup1 {
+  display: none;
+  width: 400px;
+  position: fixed;
+  float:left;
+  align-content: center;
+  text-align: center;
+  left: 45%;
+  bottom:30%;
+  background-color: #ddd;
+  border: 3px solid #f1f1f1;
+  z-index: 99999;
+  box-shadow: 0 0rem 5rem rgba(0,0,0,0.3);
+  border-radius: 25px;
+  padding: 15px;
+}
+
+.form-popup2 {
+  display: none;
+  width: 400px;
+  position: fixed;
+  float:left;
+  align-content: center;
+  text-align: center;
+  left: 45%;
+  bottom:30%;
+  background-color: #ddd;
+  border: 3px solid #f1f1f1;
+  z-index: 99999;
+  box-shadow: 0 0rem 5rem rgba(0,0,0,0.3);
+  border-radius: 25px;
+  padding: 15px;
+
 }
