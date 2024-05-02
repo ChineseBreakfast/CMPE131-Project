@@ -485,7 +485,7 @@ visibility: visible;
 overflow-x: visible;
 float:inline-start;
 background-color: rgb(255, 255, 255);
-border: .1rem solid rgb(0, 0, 0);
+border: none;
 position: relative;
 width: auto;
 max-width: 500px;
@@ -495,6 +495,7 @@ padding: 5%;
 border-radius: 25px;
 align-items: center;
 align-content: center;
+box-shadow: 0 0.5rem 3rem rgba(0,0,0,0.4);
 
 }
 
