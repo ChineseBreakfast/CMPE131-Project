@@ -132,6 +132,8 @@ def data_submit1():
             i = 0
             if (new_meeting.Room_number == '-1' ):
                 new_meeting.Room_number = str(room.query.get(i+1).Room_number) + " " + room.query.get(i+1).Building
+            if (recommended_meeting.Room_number == '-1' ):
+                recommended_meeting.Room_number = str(room.query.get(i+1).Room_number) + " " + room.query.get(i+1).Building
                 
             # we will use global variables to save our meeting objects during the context switch from python to javascript
             setsave(new_meeting)
@@ -180,37 +182,47 @@ def data_submit2():
         end_work = end_work.split(':')
         start_work = time(int(start_work[0]),int(start_work[1]),0,0)
         end_work = time(int(end_work[0]),int(end_work[1]),0,0)
-        if (int(age) < 0 or int(age) > 120):
-            alert[0] = 6
-            alert[1] = "That is not a valid age for an employee:"
-            return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert,meeting_list = return_all_meetings())
-        if (start_work > end_work):
+        if str.isdigit(age):
+            if (int(age) < 0 or int(age) > 120):
+                alert[0] = 6
+                alert[1] = age + "That is not a valid age for an employee"
+                return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert,meeting_list = return_all_meetings())
+            if (start_work > end_work):
+                alert[0] = 7
+                alert[1] = "Those are not valid working hours for an employee"
+                return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert,meeting_list = return_all_meetings())
+            new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = start_work, end_work = end_work, Password = password)
+            db.session.add(new_employee)
+            db.session.commit()
+            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
+        else:
             alert[0] = 7
-            alert[1] = "Those are not valid working hours for an employee:"
-            return render_template('input.html', rooms = return_room_name_list(), info=return_employee_name_list(),alert = alert,meeting_list = return_all_meetings())
-        new_employee = employee(name=name,  employee_id = employee.query.count()+1, age=age, start_work = start_work, end_work = end_work, Password = password)
-        db.session.add(new_employee)
-        db.session.commit()
-    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
+            alert[1] = age + "is not a valid age for an employee"
+            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
+
          
 # route from room form submit
 @app.route('/input_Room', methods = ["GET","POST"])
 def data_submit3():
     alert = (-1,"0")
     if request.method == "POST": 
-        found = 0 
         Room_number = request.form.get("Room Number")
         Building = request.form.get("Building")
-        new_room = room(Room_number = Room_number, Building = Building)
-        for i in range(room.query.count()):
-            temp_room = room.query.get(i+1)
-            if (temp_room.Room_number == int(Room_number)) and (temp_room.Building == Building):
-                alert[0] = 7
-                alert[1] = "This conference Room Already Exists"
-                return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
-        new_room = room(Room_number = Room_number, Building = Building)
-        db.session.add(new_room)
-        db.session.commit()
+        if str.isdigit(Room_number):
+            new_room = room(Room_number = Room_number, Building = Building)
+            for i in range(room.query.count()):
+                temp_room = room.query.get(i+1)
+                if (temp_room.Room_number == int(Room_number)) and (temp_room.Building == Building):
+                    alert[0] = 7
+                    alert[1] = "This conference Room Already Exists"
+                    return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
+            new_room = room(Room_number = Room_number, Building = Building)
+            db.session.add(new_room)
+            db.session.commit()
+        else:
+            alert[0] = 7
+            alert[1] = "That is an invalid Room Number"
+            return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
     return render_template('input.html', rooms = return_room_name_list(), info = return_employee_name_list(), alert = alert,meeting_list = return_all_meetings())
       
 
