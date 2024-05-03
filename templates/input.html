@@ -304,19 +304,19 @@
                             </script>
                         </div>
                     <h3>People:</h3>
-                        <div id = "peoplebox">
-                            <script>
-                                var meetingNames = '{{ info | tojson}}';
-                                meetingNames = JSON.parse(meetingNames);
-
-                                for(let i = 0; i < meetingNames.length -1; i++)
-                                {
-                                    print(meetingNames);
-                                }
-                            </script>
-                            test
+                        <div id = "peoplebox" class = 'peoplebox'>
                         </div>
-                    
+                        <script>
+                            var meetingNames = '{{ info | tojson}}';
+                            meetingNames = JSON.parse(meetingNames);
+
+                            let html_list = "";
+                            for(let i = 0; i < meetingNames.length; i++)
+                            {
+                                html_list += `<div class = employee_item>${meetingNames[i]}</div>`;
+                            }
+                            document.querySelector('.peoplebox').innerHTML = html_list;
+                        </script>
                     <div class="form-group">   
                         <label for="Meeting_Start_Time">Start:</label>
                         <input type="time" class="form-control" id="Start" name="Start" required>
@@ -326,12 +326,12 @@
                     </div>
                     <button type="submit" class="btn btn-success">Submit</button>  
 
+                    <!--Displays the people in the current meeting-->
                     <h2>Select Person</h2>
-                    <div class="form-group">
                         <div id = "selection">
-                            <label for="Name_select1">Person: </label>
-                            <select name="select1" list="namesDataList" id="NameInput1"> 
-                            <option value ="-1" >--Select a Name --</option>
+                            <label for = "select1"></label>
+                            <select name="select1" list="namesDataList" id="namesInput1">
+                            <option value ="-1" >--Select a Person--</option>
                             </select>
                             <script>
                                 // import the names and convert it to an array using JSON
@@ -351,8 +351,8 @@
                                 populateList(names);
                         
                             </script>
+                            
                         </div>
-                    </div>
                     <p>Date of Birth:</p>
                     <h3>Work Times</h3>
                    
