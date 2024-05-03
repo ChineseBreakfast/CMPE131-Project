@@ -303,27 +303,45 @@
                                 populateList(rooms);
                             </script>
                         </div>
+                    <div class="form-group">   
+                        <div style = "margin-top:10px;">
+                            <label for="Meeting_Start_Time">Start:</label>
+                            <input type="time" class="form-control" id="Start" name="Start" required>
+                      
+                            <label style = "margin-left:35px;" for="Meeting_End_Time">End:</label>
+                            <input type="time" class="form-control" id="End" name="End" required>
+                        </div>   
+                    </div>
                     <h3>People:</h3>
                         <div id = "peoplebox" class = 'peoplebox'>
-                        </div>
-                        <script>
-                            var meetingNames = '{{ info | tojson}}';
-                            meetingNames = JSON.parse(meetingNames);
+                            
+                                <script>
+                                    var meetingNames = employee_array;
+                                    var i;
 
-                            let html_list = "";
-                            for(let i = 0; i < meetingNames.length; i++)
-                            {
-                                html_list += `<div class = employee_item>${meetingNames[i]}</div>`;
-                            }
-                            document.querySelector('.peoplebox').innerHTML = html_list;
-                        </script>
-                    <div class="form-group">   
-                        <label for="Meeting_Start_Time">Start:</label>
-                        <input type="time" class="form-control" id="Start" name="Start" required>
-                
-                        <label for="Meeting_End_Time">End:</label>
-                        <input type="time" class="form-control" id="End" name="End" required>
-                    </div>
+                                    let html_list = "";
+                                    for(i = 0; i < meetingNames.length; i++)
+                                    {
+                                        html_list += `<ul> <div class = employee_item>${meetingNames[i]}</div> </ul>`;
+                                    }
+                                    document.querySelector(".peoplebox").innerHTML = html_list;
+                                </script>
+                           
+                                <!--For closing the people-->
+                                <script>
+                                    var closebtns = document.getElementsByClassName("employee_item");
+                                    var i;
+                                    
+                                    for (i = 0; i < closebtns.length; i++) {
+                                      closebtns[i].addEventListener("click", function() {
+                                        closebtns[i] 
+                                        this.parentElement.style.display = 'none';
+                                      });
+                                    }
+                                </script>
+                            
+                        </div>
+                    
                     <button type="submit" class="btn btn-success">Submit</button>  
 
                     <!--Displays the people in the current meeting-->
@@ -353,7 +371,6 @@
                             </script>
                             
                         </div>
-                    <p>Date of Birth:</p>
                     <h3>Work Times</h3>
                    
                     <div class="form-group">     
