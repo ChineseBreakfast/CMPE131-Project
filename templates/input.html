@@ -314,7 +314,7 @@
                     </div>
                     <h3>People:</h3>
                         <div id = "peoplebox" class = 'peoplebox'>
-                            
+                                
                                 <script>
                                     var meetingNames = employee_array;
                                     var i;
@@ -322,7 +322,7 @@
                                     let html_list = "";
                                     for(i = 0; i < meetingNames.length; i++)
                                     {
-                                        html_list += `<ul> <div class = employee_item>${meetingNames[i]}</div> </ul>`;
+                                        html_list += `<ul> <div class = employee_item>${meetingNames[i] + "  x"}</div> </ul>`;
                                     }
                                     document.querySelector(".peoplebox").innerHTML = html_list;
                                 </script>

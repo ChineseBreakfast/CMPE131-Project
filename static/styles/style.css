@@ -257,14 +257,15 @@ input[type=reset]:hover{
 
 .peoplebox{
     margin-top: 5px;
-    margin-left: auto;
-    margin-right: auto;
+  
     margin-bottom: 5px;
     border: 1px solid;
-    border-radius: 10px;
+    border-radius: 1px;
     border-style: solid;
+    width: 100px;
     height: 150px;
     background-color: white;
+    overflow-y: scroll;
 }
 
 .employee_item{
