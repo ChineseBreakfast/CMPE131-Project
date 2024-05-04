@@ -316,15 +316,19 @@
                         <div id = "peoplebox" class = 'peoplebox'>
                                 
                                 <script>
-                                    var meetingNames = employee_array;
-                                    var i;
+                                    function render_names(meetingNames){
+                                        var meetingNames = employee_array;
+                                        var i;
 
-                                    let html_list = "";
-                                    for(i = 0; i < meetingNames.length; i++)
-                                    {
-                                        html_list += `<ul> <div class = employee_item id = "${meetingNames[i]}" >${meetingNames[i]}</div> </ul>`;
+                                        let html_list = "";
+                                        for(i = 0; i < meetingNames.length; i++)
+                                        {
+                                            html_list += `<ul> <div class = employee_item id = "${meetingNames[i]}" >${meetingNames[i]}</div> </ul>`;
+                                        }
+                                        document.querySelector(".peoplebox").innerHTML = html_list;
+
                                     }
-                                    document.querySelector(".peoplebox").innerHTML = html_list;
+                                   
                                 </script>
                            
                                 <!--For closing the people-->
