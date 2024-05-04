@@ -322,7 +322,7 @@
                                     let html_list = "";
                                     for(i = 0; i < meetingNames.length; i++)
                                     {
-                                        html_list += `<ul> <div class = employee_item>${meetingNames[i]}</div> </ul>`;
+                                        html_list += `<ul> <div class = employee_item id = "${meetingNames[i]}" >${meetingNames[i]}</div> </ul>`;
                                     }
                                     document.querySelector(".peoplebox").innerHTML = html_list;
                                 </script>
@@ -331,14 +331,25 @@
                                 <script>
                                     var closebtns = document.getElementsByClassName("employee_item");
                                     var i;
-                                    
+
+                                    let new_employee_array = [];
+
                                     for (i = 0; i < closebtns.length; i++) {
+                                        var a = closebtns[i].id;
                                       closebtns[i].addEventListener("click", function() {
-                                        closebtns[i] 
+
+                                        for (let employee_it of employee_array)
+                                        {
+                                            if (employee_it != a)
+                                                new_employee_array.push(employee_it);
+                                        }
                                         this.parentElement.style.display = 'none';
+                                        render_names(new_employee_array)
                                       });
+
                                     }
                                 </script>
+
                             
                         </div>
                     
