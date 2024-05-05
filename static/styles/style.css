@@ -269,6 +269,36 @@ input[type=reset]:hover{
     font-family: "consolas";
 }
 
+.peoplebox{
+  margin-top: 5px;
+
+  margin-bottom: 5px;
+  border: 1px solid;
+  border-radius: 1px;
+  border-style: solid;
+  width: 100px;
+  height: 150px;
+  background-color: white;
+  overflow-y: scroll;
+}
+
+.employee_item{
+width: 60px;
+margin-left: 5px;
+margin-right: 5px;
+margin-top: 5px;
+border: 1px solid;
+border-radius: 5px;
+border-style: solid;
+border-color: rgb(199, 199, 199);
+background-color: rgb(199, 199, 199);
+cursor: pointer;
+}
+
+.employee_item:hover {
+background-color: #707070;
+}
+
 button[type=submit]{
     margin-top: 10px;
     padding: 10px;

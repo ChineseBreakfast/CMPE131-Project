@@ -258,34 +258,93 @@
                         }
                     </script>
                 </div>
+                <!--Editing Menu-->
                 <div id = "editmenu" class = "tabcontent">
-                    <h2>Meeting:</h2>
-                    <p>Room Number:<p>
-                    <h3>People:</h3>
-                    
-                    <div class="form-group">   
-                        <label for="Meeting_Start_Time">Start:</label>
-                        <input type="time" class="form-control" id="Start" name="Start" required>
-                
-                        <label for="Meeting_End_Time">End:</label>
-                        <input type="time" class="form-control" id="End" name="End" required>
-                    </div>
-                    <button type="submit" class="btn btn-success">Submit</button>  
-                    <button id = "remove" type="submit" class="btn btn-success">Remove</button> 
-
-                    <h2>Select Person</h2>
-                    <p>Date of Birth:</p>
-                    <h3>Work Times</h3>
-                   
-                    <div class="form-group">     
-                        <label for="Work_Start_Time">Start:</label>
-                        <input type="time" class="form-control" id="Start" name="Start" required>
-                
-                        <label for="Work_End_Time">End:</label>
-                        <input type="time" class="form-control" id="End" name="End" required>
-                    <div>
-                    <button type="submit" class="btn btn-success">Submit</button>  
-                    <button id = "remove" type="submit" class="btn btn-success">Remove</button> 
+                    <form action="/input_meeting" method="POST" class="mt-3" id = "formID">
+                        <h2>Meeting:</h2>
+                        <!--Meeting Room Selection-->
+                            <div id = "selection">
+                                <label for="Room_select1">Meeting Room:</label>
+                                <select name="Room_select1" list="Room_list" id="Room_select1"> 
+                                <option value ="-1" >--Select a Meeting Room--</option>
+                                </select>
+                                <script>
+                                    // import the names and convert it to an array using JSON
+                                    var rooms1 = '{{ rooms | tojson}}'
+                                    rooms1 = JSON.parse(rooms1);
+                                    
+                                    const Room_select1 = document.getElementById('Room_select1');
+                            
+                                    // This is that input field
+                                    function populateList(arr) {
+                                        arr.forEach(country => {
+                                        var option = document.createElement("option");
+                                        option.innerHTML = country;
+                                        Room_select1.appendChild(option);
+                                    });
+                                    }
+                                    populateList(rooms);
+                                </script>
+                            </div>
+                        
+                        <!--For editing meeting time-->
+                        <div class="form-group">   
+                            <div style = "margin-top:10px;">
+                                <label for="Meeting_Start_Time">Start:</label>
+                                <input type="datetime-local" class="form-control" id="Start" name="Start" required> <br>
+                               
+                                <label  style = "margin-left:7.5px;" for="Meeting_End_Time">End:</label>
+                                <input type="datetime-local" class="form-control" id="End" name="End" required>
+                            </div>   
+                        </div>
+                        <h3>People:</h3>
+                            <div id = "peoplebox" class = 'peoplebox'>
+                                    
+                                    <script>
+                                        render_names(employee_array);
+                                        create_buttons();
+                                            function render_names(input_array){
+                                            var meetingNames = input_array;
+                                            var i;
+    
+                                            let html_list = "";
+                                            for(i = 0; i < meetingNames.length; i++)
+                                            {
+                                                html_list += `<ul> <div class = employee_item id = "${meetingNames[i]}">${meetingNames[i]}</div> </ul>`;
+                                            }
+                                            document.querySelector(".peoplebox").innerHTML = html_list;
+                                            create_buttons();
+                                        }
+                                            function create_buttons(){
+                                            var closebtns = document.getElementsByClassName("employee_item");
+                                            var i;
+    
+                                            let new_employee_array = [];
+    
+                                            for (let buttonit of closebtns) {
+                                                buttonit.addEventListener("click", function() {
+    
+                                                for (let employee_it of employee_array)
+                                                {
+                                                    if (employee_it != buttonit.id)
+                                                        new_employee_array.push(employee_it);
+                                                }
+                                                employee_array = new_employee_array;
+                                                render_names(employee_array);
+                                                this.parentElement.style.display = 'none';
+                                                    });
+                                                }   
+                                            }         
+                                    </script>
+                                    
+                                
+                            </div>
+                        
+                        <button type="submit" class="btn btn-success">Submit</button>  
+    
+                        <div class="form-group">     
+                        <div>
+                     </form>
                 </div>
             </div>
         </div>
