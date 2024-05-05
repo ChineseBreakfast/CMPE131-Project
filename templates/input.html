@@ -4,6 +4,10 @@
 <head>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/static/styles/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Enter Meeting/People</title>
     <style>
     #div1 {
@@ -15,97 +19,380 @@
         display: inline-block;
         width:150px;
     }</style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    
 </head>
 
 <body>
+    <!--                'start' : str(i.Start),
+                        'end' : str(i.End),
+                        'Room_number': i.Room_number,
+                        'Description':i.Description,
+                        'employee_number' : len(i.People.employees),
+                        'attendies' : employee_list
+    function for importing all meetings into javascript
+    -->
+    <script>
+        var meeting_list = {{ meeting_list | tojson}};
+	    meeting_list = JSON.parse(meeting_list);
+        for (let i = 0; i < meeting_list.length; i++){
+        meeting_list[i] = JSON.parse(meeting_list[i]);
+        }
+	    start_time = meeting_list[0].start;
+        employee_array = meeting_list[0].attendies;
+        var a = 1;
+        
+    </script>
+    <script>
+        a = 0;
+        var title = "";
+        var alert = '{{ alert | tojson}}';
+        alert = JSON.parse(alert);
+        alert_type = alert[0];
+        alert_message = alert[1];
+        if (alert_type != -1) {
+        switch(alert_type){
+        case 1:
+        title = "Room Conflict";
+        break
+
+        case 2:
+        title = "Employee time Conflict";
+        break
+
+        case 3:
+        title = "Employee Working hours Conflict";
+        break
+       
+        case 4: 
+        title = "Date Conflict";
+        break
+
+        case 5:
+        title = "Meeting too long"
+        break
+
+        case 6:
+        title = "Invalid Age";
+        break
+
+        case 7:
+        break
+        }
+        if (alert_type <= 3){
+        swal.fire({
+            title: title,
+            text: alert_message,
+            icon: 'warning',
+            allowEscapeKey: 'true',
+            showConfirmButton: 'true',
+            showDenyButton: 'true',
+            showCancelButton: 'true',
+            confirmButtonText: 'Reschedule',
+            denyButtonText: 'Accept Conflict',
+            cancelButtonText: 'Cancel Meeting'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                a = 1;
+            }
+            else if (result.isDenied) {
+                a = 2;
+            }
+            else if (result.isCanceled) {
+                a = 3;
+            }
+            $.ajax({ 
+                type: 'GET', 
+                url: "{{ url_for( 'data_submit1' ) }}",
+                data: {'response' : a},
+                success: function(response){
+                    a = response;
+                    document.body.innerHTML = '';
+                    document.write(a);
+                    MultiselectDropdown(window.MultiselectDropdownOptions);
+                }
+            
+               
+                })
+        })
+    }
+    if (alert_type >= 4){
+        swal.fire({
+            title: title,
+            text: alert_message,
+            icon: 'warning',
+            allowEscapeKey: 'true',
+    });
+    }
+}
+    </script>
     <div id = "mainbox">
-        <div id = "text">
-            <div class = "container mt-5">
-                <!--form for adding meeting info-->
-                <h2>Enter Meeting</h2>
-                <form action="/datainput1" method="POST" class="mt-3">
-                    <!--
-                    <div class="form-group">
-                        <label for="Meeting_id">ID:</label>
-                        <input type="number" class="form-control" id="Meeting_id" name="Meeting_id" required>
+        <div class="container">
+            <div class="calendar">
+                <div class ="month"> 
+                    <i class="fa fa-angle-left prev"></i>
+                    <div class = "date">
+                        <h1></h1>
+                        <p></p>
                     </div>
-                    -->
-                    <div class="form-group">
-                        <label for="Room_number">Room Number:</label>
-                        <input type="number" class="form-control" id="Room_number" name="Room_number" required> <br>
+                    <r class="fa fa-angle-right next"></r>
+                </div>
+                    <div class = "weekdays">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
                     </div>
-                    <div class="form-group">
-                        <div id = "selection">
-                            <select name="select" list="namesDataList" id="namesInput"  multiple multiselect-search = "true">
+                <div class = "days">
+                </div>
+            </div>
+        </div>
+        <div class = "menus">
+            <div id = "text">
+                <div class = "tab">
+                    <button class = "tablinks" onclick="openTab(event, 'addmenu')">Schedule a meeting</button>
+                    <button class = "tablinks" onclick="openTab(event, 'editmenu')">Edit/View Information</button>
+                </div>
+                <script>
+                    function openTab(evt, tabName) {
+                      var i, tabcontent, tablinks;
+                      tabcontent = document.getElementsByClassName("tabcontent");
+                      for (i = 0; i < tabcontent.length; i++) {
+                        tabcontent[i].style.display = "none";
+                      }
+                      tablinks = document.getElementsByClassName("tablinks");
+                      for (i = 0; i < tablinks.length; i++) {
+                        tablinks[i].className = tablinks[i].className.replace(" active", "");
+                      }
+                      document.getElementById(tabName).style.display = "block";
+                      evt.currentTarget.className += " active";
+                    }
+                </script>
+                <div id = "addmenu" class = "tabcontent">
+                    <!--form for adding meeting info-->
+                    <h2>Schedule a Meeting</h2>
+                    <form action="/input_meeting" method="POST" class="mt-3" id = "formID">
+                        <div class="popup" onsubmit="myFunction()">
+                            <span class="popuptext" id="myPopup"></span>
+                          </div>
+                    
+                        <!-- Participant selection  -->
+                        <div class="form-group">
+                            <div id = "selection">
+                                <select name="select" list="namesDataList" id="namesInput"  multiple multiselect-search = "true" multiselect-hide-x = "true" required>
+                                </select>
+                                <script>
+                                    // import the names and convert it to an array using JSON
+                                    var names = '{{ info | tojson}}';
+                                    names = JSON.parse(names);
+                                    
+                                    select = document.getElementById('namesInput');
+                            
+                                    // This is that input field
+                                    function populateList(arr) {
+                                        arr.forEach(country => {
+                                        var option = document.createElement("option");
+                                        option.innerHTML = country;
+                                        select.appendChild(option);
+                                    });
+                                    }
+                                    populateList(names);
+                            
+                                    </script>
+                                    <script src= /static/js/multiselect-dropdown.js> </script>
+                            </div>
+                        </div>
+                        <!-- Time selection  -->
+                        <div class = "abc">
+                            <h3 class="mt-4">Meeting Times</h3>
+                            <div class="form-group1">
+                                
+                                    <label for="Meeting_Start_Time">Starts at</label> <br>
+                                    <input type="datetime-local" class="form-control1" id="Start" name="Start" required> <br>
+                                   
+                                    <label for="Meeting_End_Time">Ends at</label><br>
+                                    <input type="datetime-local" class="form-control2" id="End" name="End" required>
+                                
+                            </div>
+                        <!-- Meeting Room selection  -->
+                        <div class = "selection1" id = "selection"></div>
+                            <label class = "meeting_room" for="Room_select">Meeting Room</label> <br>
+                            <select class = "Room_select" name="Room_select" list="Room_list" id="Room_select"> 
+                            <option value ="-1" >--Select a Meeting Room--</option>
                             </select>
                             <script>
                                 // import the names and convert it to an array using JSON
-                                var names = '{{ info | tojson}}';
-                                names = JSON.parse(names);
+                                var rooms = '{{ rooms | tojson}}'
+                                rooms = JSON.parse(rooms);
                                 
-                                const select = document.getElementById('namesInput');
+                                Room_select = document.getElementById('Room_select');
                         
                                 // This is that input field
                                 function populateList(arr) {
                                     arr.forEach(country => {
                                     var option = document.createElement("option");
                                     option.innerHTML = country;
-                                    select.appendChild(option);
+                                    Room_select.appendChild(option);
                                 });
                                 }
-                        
-                                populateList(names);
-                        
-                                </script>
-                                    <script src="{{ url_for('static',filename='js/multiselect-dropdown.js') }}"> </script>
+                                populateList(rooms);
+                            </script>
+                             <br>
+                             <label for="Meeting_description">Description:</label><br>
+                             <textarea  class="form-control3" id="Meeting_description" name="Meeting_description" autocorrect = "on" > </textarea><br>
+                             <button type="submit" class="btn btn-success">Schedule Meeting</button>
                         </div>
-                    </div>
-                    <h3 class="mt-3">Meeting Time:</h3>
-                    <div class="form-group">
                         
-                            <label for="Meeting_Start_Time">Start:</label>
-                            <input type="time" class="form-control" id="Start" name="Start" required>
-                       
-                            <label for="Meeting_End_Time">End:</label>
-                            <input type="time" class="form-control" id="End" name="End" required>
-                        
+                    </form>
+                    <script>
+                        function myFunction() {
+                          const inpObj = document.getElementById("id1");
+                          if (!inpObj.checkValidity()) {
+                            document.getElementById("demo").innerHTML = inpObj.validationMessage;
+                          }
+                        }
+                    </script>
+                </div>
+                <div id = "editmenu" class = "tabcontent">
+                    <h2>Meeting:</h2>
+                    <p>Room Number:<p>
+                    <h3>People:</h3>
+                    
+                    <div class="form-group">   
+                        <label for="Meeting_Start_Time">Start:</label>
+                        <input type="time" class="form-control" id="Start" name="Start" required>
+                
+                        <label for="Meeting_End_Time">End:</label>
+                        <input type="time" class="form-control" id="End" name="End" required>
                     </div>
-                    <button type="submit" class="btn btn-success">Add Meeting</button>
-                </form>
-                <!--for for adding people-->
-                <h2 class="mt-5">Add Person</h2>
-                <form action="/datainput2" method="post" class="mt-3">
-                    <div class="form-group">
-                        <label for="Name">Name:</label><br>
-                        <input type="text" class="form-control" id="name" name="name" required><br>
-                    </div>
-                    <div class="form-group">
-                        <label for="Age">Age:</label><br>
-                        <input type="text" class="form-control" id="age" name="age" required><br>
-                    </div>
+                    <button type="submit" class="btn btn-success">Submit</button>  
+                    <button id = "remove" type="submit" class="btn btn-success">Remove</button> 
 
-                    <div class="form-group">
-                        <label for="Password">Password:</label><br>
-                        <input type="text" class="form-control" id="password" name="password" required><br>
-                    </div>
-                    <!--
-                    <div class="form-group">
-                        <label for="employee_id">ID:</label>
-                        <input type="number" class="form-control" id="employee_id" name="employee_id" required>
-                    </div>
-                    -->
-                    <h3 class="mt-3">Work Time:</h3>
-                    <div class="form-group">
-                        
-                            <label for="Work_Start_Time">Start:</label>
-                            <input type="time" class="form-control" id="start_work" name="start_work" required>
-                     
-                            <label for="Work_End_Time">End:</label>
-                            <input type="time" class="form-control" id="end_work" name="end_work" required>
+                    <h2>Select Person</h2>
+                    <p>Date of Birth:</p>
+                    <h3>Work Times</h3>
+                   
+                    <div class="form-group">     
+                        <label for="Work_Start_Time">Start:</label>
+                        <input type="time" class="form-control" id="Start" name="Start" required>
+                
+                        <label for="Work_End_Time">End:</label>
+                        <input type="time" class="form-control" id="End" name="End" required>
                     <div>
-                    <button type="submit" class="btn btn-success">Add Person</button>    
-                </form>
+                    <button type="submit" class="btn btn-success">Submit</button>  
+                    <button id = "remove" type="submit" class="btn btn-success">Remove</button> 
+                </div>
             </div>
         </div>
     </div>
+</div>
+    <script src="/static/js/calendar_logic.js"> </script>
+        <div class="container1"></div>
+            <script src = /static/js/week_logic.js></script>
+<div>
+
+    <button class="open_add_employee_menu" onclick="openForm_employee()"></button> 
+    <div class="hover_text">Add an employee</div>
+    <div class="form-popup1" id="myForm1">
+        <form action="/input_employee" method = "POST" class="form-container">
+            <h1></h1>
+
+            <label for="Employee Name"><b>Full Name</b></label>
+            <input type="text" placeholder="Employee Name" name ="name" style = "text-align: center; border-radius: 8px;" required>
+
+            <label for="Age" style = "text-align: center;"><b>Age</b></label>
+            <input type="text" placeholder="Age" name = "age" style = "text-align: center; border-radius: 8px;" reqired>  <br>
+
+            <label for="Password"  style = "text-align: center;"><b>Password</b></label>
+            <input type= "password" placeholder="****" name = "password" style = "text-align: center; border-radius: 8px;" required >  <br>
+
+            <label for="Clock In" style = "text-align: center;">Clock In</label> <br>
+            <input type="time" class="input_time id="Start" name="start_work" style = "text-align: center; border-radius: 8px; padding: 5px;" required> <br>
+                                   
+            <label for="Clock Out">Clock Out</label><br>
+            <input type="time" class="Input_time" id="End" name="end_work" style = "text-align: center; border-radius: 8px; padding: 5px;" required>  <br>
+
+            <button type="submit" class="btn" style="border-radius: 15px;" ">Add</button>
+            <button type="button" class="btn cancel" style="border-radius: 15px;" onclick="closeForm_employee()">Close</button>
+        </form>
+        <script>
+            function openForm_employee() {
+            if (document.getElementById("myForm1").style.display != "block")
+            {
+                if (document.getElementById("myForm2").style.display == "block") {
+                    document.getElementById("myForm2").style.display = "";
+                }
+                document.getElementById("myForm1").style.display = "block";
+            }
+            else {
+            document.getElementById("myForm1").style.display = "";
+            document.getElementById("myForm2").style.display = "";
+            }
+            }
+
+            function closeForm_employee() {
+            document.getElementById("myForm1").style.display = "";
+            }
+        </script>
+    </div>
+    <button class="open_add_meeting_room_menu" onclick="openForm_room()"></button> 
+    <div class = "hover_text">Add a Conference Room</div>
+    <div class="form-popup2" id="myForm2">
+        <form action="/input_Room" method = "POST" class="form-container">
+            <h1>Add a Meeting Room</h1>
+
+            <label for="Room Number"><b>Room Number</b></label>
+            <input type="text" placeholder="" name ="Room Number"  style = "text-align: center; border-radius: 8px;" required>
+
+            <label for="Building Name"><b>Building</b></label>
+            <input type="text" placeholder="" style = "text-align: center; border-radius: 8px;"  name = "Building">
+
+            <button type="submit" class="btn" style="border-radius: 15px;" >Add</button>
+            <button type="button" class="btn cancel"  style="border-radius: 15px;" onclick="closeForm_room()">Close</button>
+        </form>
+        <script>
+            function openForm_room() {
+                if (document.getElementById("myForm2").style.display != "block")
+            {
+                if (document.getElementById("myForm1").style.display == "block") {
+                    document.getElementById("myForm1").style.display = "";
+                }
+                document.getElementById("myForm2").style.display = "block";
+            }
+            else {
+            document.getElementById("myForm2").style.display = "";
+            document.getElementById("myForm1").style.display = "";
+            }
+            }
+
+            function closeForm_room() {
+            document.getElementById("myForm2").style.display = "";
+            }
+        </script>
+        <script>
+        document.onkeydown = function(evt) {
+    evt = evt || window.event;
+    var isEscape = false;
+    if ("key" in evt) {
+        isEscape = (evt.key === "Escape" || evt.key === "Esc");
+    }
+    if (isEscape) {
+        closeForm_room();
+        closeForm_employee();
+    }
+};
+        </script>
+    </div>
+</div>
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+            
 </body>

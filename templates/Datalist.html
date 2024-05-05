@@ -1,54 +1,19 @@
 <!DOCTYPE html>
 <html>
-    <head>
-    </head>
-    <body>
-		<form action="/datainput", method="POST">
-			<label for="names"> Chose someone to add</label>
-			<select name="select" list="namesDataList" id="namesInput"  multiple multiselect-search = "true">
-			</select>
-			<input type="submit">
-		</form>
-		<!--
-		<input type="text" list="namesDataList" id="namesInput" />
-		<datalist id="namesDataList">
-		</datalist>
-		-->
-	
+<head>
 
-		<!--<select name="select" multiple multiselect-search = "true">
-			<option value="cheese">Cheese</option>
-			<option value="tomatoes">Tomatoes</option>
-			<option value="mozarella">Mozzarella</option>
-			<option value=Mushrooms</option>
-			<option value="pepperoni">Pepperoni</option>
-			<option value="onions">Onions</option>
-		</select>-->
+</head>
 
-		
+<body>
+	<script>
+		var alert = { alert , tojson};
+		// alert = JSON.stringify(alert);
+	    alert = JSON.parse(alert);
+		jsonobj = alert.name;
+		print(jsonobj);
+	</script>
+  <h1>Template</h1>
 
-
-
-		<script>
-		// import the names and convert it to an array using JSON
-		var names = '{{ info | tojson}}';
-		names = JSON.parse(names);
-		
-		const select = document.getElementById('namesInput');
-
-		// This is that input field
-		function populateList(arr) {
-			arr.forEach(country => {
-			var option = document.createElement("option");
-			option.innerHTML = country;
-			select.appendChild(option);
-		});
-		}
-
-populateList(names);
-
-		</script>
-			<script src="{{ url_for('static',filename='js/multiselect-dropdown.js') }}"> </script>
-	</body>
-
+  
+</body>
 </html>
