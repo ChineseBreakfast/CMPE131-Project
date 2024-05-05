@@ -279,7 +279,9 @@
 
                 <!--Editing Menu-->
                 <div id = "editmenu" class = "tabcontent">
+                <form action="/input_meeting" method="POST" class="mt-3" id = "formID">
                     <h2>Meeting:</h2>
+                    <!--Meeting Room Selection-->
                         <div id = "selection">
                             <label for="Room_select1">Meeting Room:</label>
                             <select name="Room_select1" list="Room_list" id="Room_select1"> 
@@ -310,7 +312,7 @@
                             <label for="Meeting_Start_Time">Start:</label>
                             <input type="datetime-local" class="form-control" id="Start" name="Start" required> <br>
                            
-                            <label  style = "margin-left:7px;" for="Meeting_End_Time">End:</label>
+                            <label  style = "margin-left:7.5px;" for="Meeting_End_Time">End:</label>
                             <input type="datetime-local" class="form-control" id="End" name="End" required>
                         </div>   
                     </div>
@@ -318,43 +320,40 @@
                         <div id = "peoplebox" class = 'peoplebox'>
                                 
                                 <script>
-                                    function render_names(personArray){
-                                        var meetingNames = personArray;
+                                    render_names(employee_array);
+                                    create_buttons();
+                                        function render_names(input_array){
+                                        var meetingNames = input_array;
                                         var i;
 
                                         let html_list = "";
                                         for(i = 0; i < meetingNames.length; i++)
                                         {
-                                            html_list += `<ul> <div class = employee_item id = "${meetingNames[i]}" >${meetingNames[i]}</div> </ul>`;
+                                            html_list += `<ul> <div class = employee_item id = "${meetingNames[i]}">${meetingNames[i]}</div> </ul>`;
                                         }
                                         document.querySelector(".peoplebox").innerHTML = html_list;
-
+                                        create_buttons();
                                     }
-                                   render_names(employee_array)
-                                </script>
-                           
-                                <!--For closing the people-->
-                                <script>
-                                    var closebtns = document.getElementsByClassName("employee_item");
-                                    var i;
+                                        function create_buttons(){
+                                        var closebtns = document.getElementsByClassName("employee_item");
+                                        var i;
 
-                                    let new_employee_array = [];
+                                        let new_employee_array = [];
 
-                                    for (i = 0; i < closebtns.length; i++) {
-                                      var a = closebtns[i].id;
-                                      closebtns[i].addEventListener("click", function() {
+                                        for (let buttonit of closebtns) {
+                                            buttonit.addEventListener("click", function() {
 
-                                        for (let employee_it of employee_array)
-                                        {
-                                            if (employee_it != a)
-                                                new_employee_array.push(employee_it);
-                                        }
-                                        this.parentElement.style.display = 'none';
-                                        render_names(new_employee_array)
-                                      });
-
-                                    }
-                                    document.querySelector(".peoplebox").appendChild = '<input type="text" class="form-control" id="end_work" name="employee_list" value= "${new_employee_array}" required>';
+                                            for (let employee_it of employee_array)
+                                            {
+                                                if (employee_it != buttonit.id)
+                                                    new_employee_array.push(employee_it);
+                                            }
+                                            employee_array = new_employee_array;
+                                            render_names(employee_array);
+                                            this.parentElement.style.display = 'none';
+                                                });
+                                            }   
+                                        }         
                                 </script>
                                 
                             
@@ -364,6 +363,7 @@
 
                     <div class="form-group">     
                     <div>
+                 </form>
             
                 </div>
             </div>
