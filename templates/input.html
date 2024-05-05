@@ -303,13 +303,15 @@
                                 populateList(rooms);
                             </script>
                         </div>
+                    
+                    <!--For editing meeting time-->
                     <div class="form-group">   
                         <div style = "margin-top:10px;">
                             <label for="Meeting_Start_Time">Start:</label>
-                            <input type="time" class="form-control" id="Start" name="Start" required>
-                      
-                            <label style = "margin-left:35px;" for="Meeting_End_Time">End:</label>
-                            <input type="time" class="form-control" id="End" name="End" required>
+                            <input type="datetime-local" class="form-control" id="Start" name="Start" required> <br>
+                           
+                            <label  style = "margin-left:7px;" for="Meeting_End_Time">End:</label>
+                            <input type="datetime-local" class="form-control" id="End" name="End" required>
                         </div>   
                     </div>
                     <h3>People:</h3>
